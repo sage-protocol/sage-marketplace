@@ -39,8 +39,4 @@ List all installed dependencies with metadata.
 
 #### `/sage-update [key] [--all]`
 
-Update dependencies to latest versions. Use `--all` for all, or specify a key.
-
-## License
-
-MIT
+Update dependencies to latest versions.
