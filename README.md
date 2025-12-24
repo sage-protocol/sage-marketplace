@@ -1,46 +1,56 @@
-# Every Marketplace
+# Sage Protocol Marketplace
 
-The official Every marketplace where engineers from Every.to share their workflows. Currently featuring the Compounding Engineering Philosophy plugin.
+A Claude Code plugin marketplace for Sage Protocol, featuring tools for prompt/skill management and AI-powered development workflows.
+
+> Forked from [Every Marketplace](https://github.com/EveryInc/every-marketplace)
+
+## Plugins
+
+| Plugin | Description |
+|--------|-------------|
+| **sage-manager** | Manage Sage Protocol prompts and skills (install, list, update) |
+| **compound-engineering** | AI-powered development tools that compound your engineering work |
 
 ## Quick Start
 
-### Standard Installation
-Run Claude and add the marketplace:
+### Add the Marketplace
 
 ```bash
-/plugin marketplace add https://github.com/EveryInc/every-marketplace
+/plugin marketplace add https://github.com/sage-protocol/compounding-engineering-plugin
 ```
 
-Then install the plugin:
+### Install Plugins
 
 ```bash
+# Sage Protocol dependency management
+/plugin install sage-manager
+
+# AI-powered development workflows
 /plugin install compound-engineering
 ```
 
-### One-Command Installation
-Use the [Claude Plugins CLI](https://claude-plugins.dev) to skip the marketplace setup:
+---
 
-```bash
-npx claude-plugins install @EveryInc/every-marketplace/compound-engineering
-```
+# Sage Manager Plugin
 
-This automatically adds the marketplace and installs the plugin in a single step.
+Manage Sage Protocol prompts and skills directly from Claude Code.
 
-### Factory (Droid) quick start
+**Requires:** `npm install -g @sage-protocol/cli`
 
-1) Install Droid (Factory).
+## Commands
 
-```bash
-bunx droid-factory
-```
+### `/sage-install <source>`
+Install prompts or skills from various sources:
+- **DAO**: `0x5be53fB4...` - On-chain DAO library
+- **IPFS**: `QmT5NvUto...` or `bafkrei...` - Content CID
+- **GitHub**: `github:user/repo/path` - Repository
+- **Bundled**: `build-web3` - CLI bundled skills
 
-What this does: copies Claude Code marketplace commands/agents/subagents and converts them to Droid format.
+### `/sage-list`
+List all installed dependencies with metadata.
 
-Next:
-- Start Droid
-- In Settings, enable Sub-agents
-
-You're done: use this source from Droid. You don't need to add it in Claude Code anymore.
+### `/sage-update [key] [--all]`
+Update dependencies to latest versions.
 
 ---
 
