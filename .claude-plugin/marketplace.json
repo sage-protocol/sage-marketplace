@@ -1,27 +1,14 @@
 {
-  "name": "every-marketplace",
+  "name": "sage-marketplace",
   "owner": {
-    "name": "Every Inc.",
-    "url": "https://github.com/EveryInc"
+    "name": "Sage Protocol",
+    "url": "https://github.com/sage-protocol"
   },
   "metadata": {
-    "description": "Official Every plugin marketplace for Claude Code extensions",
+    "description": "Sage Protocol plugin marketplace for Claude Code",
     "version": "1.0.0"
   },
   "plugins": [
-    {
-      "name": "compound-engineering",
-      "description": "AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last. Includes 27 specialized agents, 17 commands, and 13 skills.",
-      "version": "2.13.0",
-      "author": {
-        "name": "Kieran Klaassen",
-        "url": "https://github.com/kieranklaassen",
-        "email": "kieran@every.to"
-      },
-      "homepage": "https://github.com/EveryInc/compound-engineering-plugin",
-      "tags": ["ai-powered", "compound-engineering", "workflow-automation", "code-review", "quality", "knowledge-management", "image-generation"],
-      "source": "./plugins/compound-engineering"
-    },
     {
       "name": "sage-manager",
       "description": "Manage Sage Protocol prompts and skills. Install, list, and update dependencies from DAOs, IPFS, or GitHub.",
