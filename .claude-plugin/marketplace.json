@@ -21,6 +21,18 @@
       "homepage": "https://github.com/EveryInc/compound-engineering-plugin",
       "tags": ["ai-powered", "compound-engineering", "workflow-automation", "code-review", "quality", "knowledge-management", "image-generation"],
       "source": "./plugins/compound-engineering"
+    },
+    {
+      "name": "sage-manager",
+      "description": "Manage Sage Protocol prompts and skills. Install, list, and update dependencies from DAOs, IPFS, or GitHub.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Sage Protocol",
+        "url": "https://github.com/sage-protocol"
+      },
+      "homepage": "https://sageprotocol.io",
+      "tags": ["sage-protocol", "prompts", "skills", "dependency-management"],
+      "source": "./plugins/sage-manager"
     }
   ]
 }

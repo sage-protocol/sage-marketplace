@@ -1,0 +1,18 @@
+{
+  "name": "sage-manager",
+  "version": "1.0.0",
+  "description": "Manage Sage Protocol prompts and skills. Install, list, and update dependencies from DAOs, IPFS, or GitHub.",
+  "author": {
+    "name": "Sage Protocol",
+    "url": "https://github.com/sage-protocol"
+  },
+  "homepage": "https://sageprotocol.io",
+  "repository": "https://github.com/sage-protocol/sage-protocol",
+  "license": "MIT",
+  "keywords": [
+    "sage-protocol",
+    "prompts",
+    "skills",
+    "dependency-management"
+  ]
+}
