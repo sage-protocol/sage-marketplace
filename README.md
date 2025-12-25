@@ -20,9 +20,11 @@ A Claude Code plugin marketplace for Sage Protocol.
 
 Manage Sage Protocol prompts and skills directly from Claude Code.
 
-**Requires:** `npm install -g @sage-protocol/cli`
-
 ### Commands
+
+#### `/sage-setup`
+
+Install the Sage CLI (required for other commands).
 
 #### `/sage-install <source>`
 
