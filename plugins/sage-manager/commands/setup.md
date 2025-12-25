@@ -1,26 +1,11 @@
 ---
 name: sage-setup
-description: Install the Sage Protocol CLI
-allowed-tools: Bash(npm install:*), Bash(which:*)
+description: Install the Sage CLI for plugin commands
+allowed-tools: Bash(npm install:*), Bash(which sage:*)
 ---
 
-Install the Sage Protocol CLI globally.
+Install the Sage CLI (required for /sage-install, /sage-list, /sage-update).
 
 ```bash
-# Check if already installed
-if which sage > /dev/null 2>&1; then
-  echo "✅ Sage CLI already installed: $(sage --version)"
-  exit 0
-fi
-
-# Install globally
-npm install -g @sage-protocol/cli
-
-# Verify installation
-if which sage > /dev/null 2>&1; then
-  echo "✅ Sage CLI installed successfully: $(sage --version)"
-else
-  echo "❌ Installation failed. Try running manually: npm install -g @sage-protocol/cli"
-  exit 1
-fi
+which sage || npm install -g @sage-protocol/cli
 ```
