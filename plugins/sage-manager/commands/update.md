@@ -8,7 +8,11 @@ argument-hint: [key] [--all]
 Update installed dependencies to their latest versions.
 
 ```bash
-which sage || echo "Error: Sage CLI not installed. Run: npm install -g @sage-protocol/cli"
+if ! which sage >/dev/null 2>&1; then
+  echo "Error: Sage CLI not installed. Run: /sage-setup"
+  exit 1
+fi
+
 sage update $ARGUMENTS --json
 ```
 

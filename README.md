@@ -28,7 +28,7 @@ Install the Sage CLI (required for other commands).
 
 #### `/sage-install <source>`
 
-Install prompts or skills from various sources:
+Install prompts or skills via the Sage CLI:
 
 - **DAO**: `0x5be53fB4...` - On-chain DAO library
 - **IPFS**: `QmT5NvUto...` or `bafkrei...` - Content CID
@@ -37,7 +37,7 @@ Install prompts or skills from various sources:
 
 #### `/sage-list`
 
-List all installed dependencies with metadata.
+List all installed dependencies with metadata (CLI workspace).
 
 #### `/sage-update [key] [--all]`
 

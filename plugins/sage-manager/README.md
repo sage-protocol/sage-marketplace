@@ -8,7 +8,7 @@ Manage Sage Protocol prompts and skills directly from Claude Code.
 claude plugin install sage-manager@every-marketplace
 ```
 
-Requires Sage CLI:
+Requires Sage CLI (used by all commands):
 ```bash
 npm install -g @sage-protocol/cli
 ```
@@ -17,7 +17,7 @@ npm install -g @sage-protocol/cli
 
 ### `/sage-install <source>`
 
-Install prompts or skills from various sources:
+Install prompts or skills via the Sage CLI. Supports:
 
 - **DAO**: `0x5be53fB4...` - On-chain DAO library
 - **IPFS**: `QmT5NvUto...` or `bafkrei...` - Content CID
@@ -26,11 +26,15 @@ Install prompts or skills from various sources:
 
 ### `/sage-list`
 
-List all installed dependencies with metadata.
+List all installed dependencies with metadata (CLI workspace).
 
 ### `/sage-update [key] [--all]`
 
 Update dependencies to latest versions. Use `--all` for all, or specify a key.
+
+### `/sage-setup`
+
+Install the Sage CLI if missing.
 
 ## License
 
