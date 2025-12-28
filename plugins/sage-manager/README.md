@@ -5,10 +5,14 @@ Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, 
 ## Installation
 
 ```bash
-claude plugin install sage-manager@every-marketplace
+# Add the Sage marketplace
+/plugin marketplace add https://github.com/sage-protocol/sage-marketplace
+
+# Install the plugin
+/plugin install sage-manager
 ```
 
-The CLI will be installed automatically when needed.
+The CLI will be installed automatically when you start using the skill.
 
 ## Features
 
