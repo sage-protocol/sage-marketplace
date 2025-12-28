@@ -1,6 +1,6 @@
 # Sage Manager Plugin
 
-Manage Sage Protocol prompts and skills directly from Claude Code.
+Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces.
 
 ## Installation
 
@@ -8,33 +8,37 @@ Manage Sage Protocol prompts and skills directly from Claude Code.
 claude plugin install sage-manager@every-marketplace
 ```
 
-Requires Sage CLI (used by all commands):
-```bash
-npm install -g @sage-protocol/cli
-```
+The CLI will be installed automatically when needed.
 
-## Commands
+## Features
 
-### `/sage-install <source>`
+### Visual Dashboard
+After installing this plugin, Claude will automatically show you a visual dashboard for Sage Protocol tasks. Just say what you want to do:
 
-Install prompts or skills via the Sage CLI. Supports:
+- "create a bounty"
+- "vote on proposals"
+- "stake my tokens"
+- "manage my DAO"
 
-- **DAO**: `0x5be53fB4...` - On-chain DAO library
-- **IPFS**: `QmT5NvUto...` or `bafkrei...` - Content CID
-- **GitHub**: `github:user/repo/path` - Repository
-- **Bundled**: `build-web3` - CLI bundled skills
+No CLI commands required - Claude handles everything with visual menus and confirmations.
 
-### `/sage-list`
+### Included Workflows
+- **Libraries** - Browse, install, publish prompts
+- **DAO** - Create, join, manage DAOs
+- **Governance** - Vote, create proposals
+- **Bounties** - Create, claim, manage bounties
+- **Staking** - Stake, delegate, redelegate tokens
+- **Treasury** - Manage DAO funds
+- **NFTs** - Voting multipliers
 
-List all installed dependencies with metadata (CLI workspace).
+### Commands (Power Users)
 
-### `/sage-update [key] [--all]`
+For those who prefer explicit commands:
 
-Update dependencies to latest versions. Use `--all` for all, or specify a key.
-
-### `/sage-setup`
-
-Install the Sage CLI if missing.
+- `/sage-install <source>` - Install from DAO, IPFS, or GitHub
+- `/sage-list` - List installed dependencies
+- `/sage-update [key]` - Update dependencies
+- `/sage-setup` - Install/update Sage CLI
 
 ## License
 

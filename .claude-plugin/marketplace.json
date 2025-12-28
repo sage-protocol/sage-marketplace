@@ -11,8 +11,8 @@
   "plugins": [
     {
       "name": "sage-manager",
-      "description": "Manage Sage Protocol prompts and skills. Install, list, and update dependencies from DAOs, IPFS, or GitHub.",
-      "version": "1.0.0",
+      "description": "Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces.",
+      "version": "1.1.0",
       "author": {
         "name": "Sage Protocol",
         "url": "https://github.com/sage-protocol"
