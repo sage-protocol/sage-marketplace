@@ -1,6 +1,6 @@
 {
   "name": "sage-manager",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces.",
   "author": {
     "name": "Sage Protocol",
@@ -20,5 +20,11 @@
   ],
   "agents": [
     "../agents/SKILL.md"
+  ],
+  "commands": [
+    "../commands/install.md",
+    "../commands/list.md",
+    "../commands/setup.md",
+    "../commands/update.md"
   ]
 }

@@ -12,7 +12,7 @@
     {
       "name": "sage-manager",
       "description": "Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "Sage Protocol",
         "url": "https://github.com/sage-protocol"
