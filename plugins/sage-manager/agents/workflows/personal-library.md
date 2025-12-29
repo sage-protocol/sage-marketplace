@@ -2,6 +2,29 @@
 Manage personal prompt libraries: vault (private/encrypted), personal (public wallet-owned), and personal marketplace (licensed content).
 </objective>
 
+<mcp_tools>
+**MCP Tools (read-only, prefer when available)**
+
+If scroll MCP is registered, use these for listing/searching:
+- `mcp__scroll__list_libraries` → List all libraries (personal + vault + DAO)
+- `mcp__scroll__search_prompts` → Search prompts by keyword or semantic query
+- `mcp__scroll__trending_prompts` → Discover popular prompts
+- `mcp__scroll__get_prompt` → Get full prompt content by key
+- `mcp__scroll__builder_recommend` → Get AI recommendations for prompts
+
+**CLI Commands (for writes)**
+All publish, push, and delete operations use sage CLI:
+- `sage library personal push` / `sage library vault push`
+- `sage personal publish` / `sage personal premium publish`
+- `sage library personal delete` / `sage library vault delete`
+
+**Routing:**
+```
+List/Search prompts → MCP_FIRST: mcp__scroll__*, else: sage library personal list
+Push/Publish prompts → Always: sage CLI (requires wallet signing)
+```
+</mcp_tools>
+
 <vault_vs_personal>
 **Understanding the Two Library Types:**
 

@@ -228,6 +228,20 @@ sage doctor
 
 Checks: RPC health, chainId, workspace, Claude Code integration, contract addresses.
 
+**Dual-CLI diagnostics (if scroll installed):**
+```bash
+# Check scroll status
+scroll --version
+scroll daemon status
+
+# MCP hub status
+scroll hub status
+
+# If scroll MCP is registered, use MCP tools:
+# - mcp__scroll__get_project_context → project state, wallet, libraries
+# - mcp__scroll__hub_status → running MCP servers
+```
+
 **Component-specific diagnostics:**
 ```bash
 sage nft doctor                       # NFT/multiplier config

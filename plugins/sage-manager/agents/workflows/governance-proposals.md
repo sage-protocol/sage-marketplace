@@ -42,17 +42,28 @@ sage proposals execute <id> --subdao 0x... -y
 <authority>
 **Agent Responsibilities (MCP vs CLI)**
 
-**MCP Server (read-only)**
-- Navigate DAO structure and governance profiles
-- Query proposal states, voting power, and thresholds
-- Generate CLI commands for the user to execute
-- Iterate on prompts locally before publishing
+**MCP Tools (read-only, instant - prefer when available)**
+If scroll MCP is registered, use these for all read operations:
+- `mcp__scroll__list_proposals` → List governance proposals
+- `mcp__scroll__get_voting_power` → Check voting power for address
+- `mcp__scroll__list_subdaos` → List all DAOs
+- `mcp__scroll__get_project_context` → Get wallet, DAO context
 
-**CLI (execution surface)**
+**CLI Commands (for writes and diagnostics)**
 - Submit transactions: propose, vote, queue, execute
 - Run readiness checks (`preflight`, `threshold-status`)
 - Delegate voting power and manage vote/propose prerequisites
 - Execute fix-flow commands when readiness checks fail
+
+**Routing Logic:**
+```
+Read operation (proposals, voting power, DAO list):
+  → If MCP_FIRST mode: Use mcp__scroll__* tools
+  → Else: Use sage governance list --json
+
+Write operation (vote, propose, queue, execute):
+  → Always use sage CLI (requires wallet signing)
+```
 
 The MCP server provides discovery and command generation; the CLI handles all state-changing operations.
 </authority>

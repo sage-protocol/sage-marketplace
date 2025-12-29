@@ -1,7 +1,7 @@
 {
   "name": "sage-manager",
-  "version": "1.2.0",
-  "description": "Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces.",
+  "version": "1.3.0",
+  "description": "Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces. Supports dual-CLI backend (sage + scroll) with MCP integration.",
   "author": {
     "name": "Sage Protocol",
     "url": "https://github.com/sage-protocol"
@@ -22,6 +22,7 @@
     "../agents/SKILL.md"
   ],
   "commands": [
+    "../commands/backend.md",
     "../commands/install.md",
     "../commands/list.md",
     "../commands/setup.md",
