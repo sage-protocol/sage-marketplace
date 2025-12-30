@@ -19,13 +19,13 @@
     "web3"
   ],
   "agents": [
-    "../agents/SKILL.md"
+    "./agents/SKILL.md"
   ],
   "commands": [
-    "../commands/backend.md",
-    "../commands/install.md",
-    "../commands/list.md",
-    "../commands/setup.md",
-    "../commands/update.md"
+    "./commands/backend.md",
+    "./commands/install.md",
+    "./commands/list.md",
+    "./commands/setup.md",
+    "./commands/update.md"
   ]
 }
