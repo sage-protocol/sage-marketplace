@@ -87,11 +87,19 @@ sage personal premium unlist <key> -y                 # Remove listing
 </command_reference>
 
 <personal_vs_dao>
-| Type | Ownership | Governance | Use Case |
-|------|-----------|------------|----------|
-| Vault (on-chain personal) | Your EOA | Operator | Private or personal prompt libraries (on-chain) |
-| Personal Marketplace | Your EOA | None | Licensed/premium prompt sales |
-| DAO/SubDAO | DAO treasury | Proposals required | Community-managed libraries |
+| Type | Storage | Governance | Discoverability | Use Case |
+|------|---------|------------|-----------------|----------|
+| **Personal Governance DAO** | On-chain (LibraryRegistry) | Operator mode (no voting) | Full on-chain (subgraph indexed) | Solo creators who want instant updates + full discoverability |
+| Personal Library | Off-chain (IPFS Worker) | None | Public but limited | Simple public sharing (faster setup) |
+| Vault Library | Off-chain (IPFS Worker, encrypted) | None | Private only | Private/encrypted prompt storage |
+| Personal Marketplace | On-chain (MarketRegistry) | None | Marketplace only | Licensed/premium prompt sales |
+| Community DAO | On-chain (LibraryRegistry) | Token voting required | Full on-chain | Community-managed libraries |
+
+**Key distinction**:
+- **Personal DAO** (`--governance personal`) = ON-chain, fully discoverable via subgraph, direct Timelock updates (no voting)
+- **Personal Library** (`sage library personal`) = OFF-chain via IPFS Worker API, simpler but less discoverable
+
+**Recommendation**: For solo creators who want full discoverability, use **Personal Governance DAO** (Path C below).
 </personal_vs_dao>
 
 <process>
@@ -142,7 +150,41 @@ Vault content is encrypted and only accessible with your wallet signature.
 
 ---
 
-**Path C: Personal Marketplace (licensed/premium content)**
+**Path C: Personal Governance DAO (RECOMMENDED for full discoverability)**
+
+Create a DAO in operator mode. Get full on-chain discoverability with instant updates - no voting required.
+
+```bash
+# 1. Create DAO + upload prompts in one command
+sage library quickstart \
+  --name "My Skills Library" \
+  --from-dir ./prompts \
+  --governance personal
+
+# This creates:
+# - SubDAO contract (your library address)
+# - Timelock (for scheduling updates)
+# - Alias saved (e.g., my-skills-library)
+
+# 2. Publish updates (auto-detects operator mode, schedules directly via Timelock)
+sage prompts publish --subdao my-skills-library --files ./prompts/new-skill.md --yes
+
+# 3. With --exec flag, also auto-executes after timelock delay (usually 0 for personal)
+sage prompts publish --subdao my-skills-library --files ./prompts/new-skill.md --yes --exec
+
+# 4. Sync to scroll for local access
+scroll library sync
+```
+
+**Why use Personal Governance DAO?**
+- Full on-chain discoverability (indexed by subgraph, searchable via scroll)
+- **No voting required** - operator mode uses direct Timelock scheduling
+- Professional library structure (versioned manifests, CIDs)
+- Can upgrade to community governance later if desired
+
+---
+
+**Path D: Personal Marketplace (licensed/premium content)**
 
 Use the marketplace for selling prompts or distributing licensed content.
 
@@ -231,9 +273,19 @@ sage personal list
 </creator_workflow>
 
 <success_criteria>
+**For Personal Governance DAO (recommended):**
+- [ ] DAO created with `sage library quickstart --governance personal`
+- [ ] Prompts uploaded to IPFS
+- [ ] Operator mode detected (output shows "Operator mode: scheduled" or "executed")
+- [ ] Library synced to scroll (`scroll library sync`)
+- [ ] Prompts discoverable via `scroll search_prompts`
+
+**For Vault/Personal Library:**
 - [ ] Vault library created and pushed
 - [ ] Personal registry created
-- [ ] Free prompts published to IPFS + on-chain
+- [ ] Free prompts published to IPFS
+
+**For Premium Marketplace:**
 - [ ] Premium content encrypted and priced
 - [ ] Licenses purchasable
 - [ ] Purchased content accessible
