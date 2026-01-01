@@ -1,0 +1,38 @@
+{
+  "name": "solidity-audit",
+  "version": "2.0.1",
+  "description": "Use when auditing Solidity/EVM smart contracts, triaging Slither/Semgrep results, building threat models/invariants, or producing an audit report with reproducible evidence. CLI-first with Hound knowledge graphs.",
+  "author": {
+    "name": "Sage Protocol",
+    "email": "team@sageprotocol.io"
+  },
+  "license": "MIT",
+  "keywords": [
+    "solidity",
+    "audit",
+    "security",
+    "hound",
+    "smart-contracts",
+    "ethereum",
+    "evm",
+    "foundry",
+    "slither"
+  ],
+  "entry": "SKILL.md",
+  "type": "skill",
+  "capabilities": [
+    "security-analysis",
+    "vulnerability-detection",
+    "threat-modeling",
+    "invariant-extraction",
+    "poc-generation"
+  ],
+  "tools": {
+    "optional": [
+      "hound",
+      "slither",
+      "semgrep",
+      "foundry"
+    ]
+  }
+}

@@ -20,6 +20,18 @@
       "homepage": "https://sageprotocol.io",
       "tags": ["sage-protocol", "prompts", "skills", "dependency-management"],
       "source": "./plugins/sage-manager"
+    },
+    {
+      "name": "solidity-audit",
+      "description": "Use when auditing Solidity/EVM smart contracts, triaging Slither/Semgrep results, building threat models/invariants, or producing an audit report with reproducible evidence. CLI-first with Hound knowledge graphs.",
+      "version": "2.0.1",
+      "author": {
+        "name": "Sage Protocol",
+        "url": "https://github.com/sage-protocol"
+      },
+      "homepage": "https://sageprotocol.io",
+      "tags": ["solidity", "audit", "security", "hound", "smart-contracts", "ethereum", "evm", "foundry", "slither"],
+      "source": "./plugins/solidity-audit"
     }
   ]
 }
