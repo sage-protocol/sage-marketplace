@@ -1,0 +1,40 @@
+{
+  "name": "sage-protocol-cli",
+  "description": "Automate Sage Protocol governance workflows using the CLI. Create DAOs, manage prompts, run governance proposals, create bounties, and participate in permissionless collaboration on prompts.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Sage Protocol",
+    "email": "team@sageprotocol.io"
+  },
+  "homepage": "https://sageprotocol.io",
+  "repository": "https://github.com/sage-protocol/sage-skill",
+  "license": "MIT",
+  "keywords": [
+    "governance",
+    "dao",
+    "prompts",
+    "web3",
+    "collaboration",
+    "bounties",
+    "treasury",
+    "voting"
+  ],
+  "agents": [
+    "./SKILL.md"
+  ],
+  "commands": [
+    "./workflows/boost-management.md",
+    "./workflows/bounty-lifecycle.md",
+    "./workflows/contributor-staking.md",
+    "./workflows/dao-playbooks.md",
+    "./workflows/governance-proposals.md",
+    "./workflows/nft-multipliers.md",
+    "./workflows/personal-library.md",
+    "./workflows/prompts-projects.md",
+    "./workflows/setup-diagnostics.md",
+    "./workflows/token-delegation.md",
+    "./workflows/treasury-operations.md",
+    "./workflows/trust-signals.md"
+  ],
+  "strict": false
+}

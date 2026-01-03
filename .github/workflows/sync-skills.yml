@@ -1,0 +1,53 @@
+name: Sync Skills from Sage Protocol
+
+on:
+  # Run every 15 minutes
+  schedule:
+    - cron: '*/15 * * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+  # Trigger via webhook (worker can POST to this)
+  repository_dispatch:
+    types: [skill-published]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout marketplace
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Sync skills from worker
+        run: |
+          chmod +x ./scripts/sync-skills.sh
+          ./scripts/sync-skills.sh
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "Sage Protocol Bot"
+          git config user.email "bot@sageprotocol.io"
+          git add -A
+          git commit -m "chore: sync skills from Sage Protocol
+
+          Auto-synced from https://api.sageprotocol.io/marketplace/skills"
+          git push

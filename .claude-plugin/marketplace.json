@@ -10,16 +10,25 @@
   },
   "plugins": [
     {
-      "name": "sage-manager",
-      "description": "Command-free Sage Protocol experience for Claude Code. Manage DAOs, governance, bounties, staking, and prompt libraries through intuitive visual interfaces.",
-      "version": "1.2.0",
+      "name": "sage-protocol-cli",
+      "description": "Automate Sage Protocol governance workflows using the CLI. Create DAOs, manage prompts, run governance proposals, create bounties, and participate in permissionless collaboration on prompts.",
+      "version": "1.0.0",
       "author": {
         "name": "Sage Protocol",
-        "url": "https://github.com/sage-protocol"
+        "email": "team@sageprotocol.io"
       },
       "homepage": "https://sageprotocol.io",
-      "tags": ["sage-protocol", "prompts", "skills", "dependency-management"],
-      "source": "./plugins/sage-manager"
+      "tags": [
+        "governance",
+        "dao",
+        "prompts",
+        "web3",
+        "collaboration",
+        "bounties",
+        "treasury",
+        "voting"
+      ],
+      "source": "./plugins/sage-protocol-sage-skill"
     },
     {
       "name": "solidity-audit",
@@ -27,10 +36,20 @@
       "version": "2.0.1",
       "author": {
         "name": "Sage Protocol",
-        "url": "https://github.com/sage-protocol"
+        "email": "team@sageprotocol.io"
       },
       "homepage": "https://sageprotocol.io",
-      "tags": ["solidity", "audit", "security", "hound", "smart-contracts", "ethereum", "evm", "foundry", "slither"],
+      "tags": [
+        "solidity",
+        "audit",
+        "security",
+        "hound",
+        "smart-contracts",
+        "ethereum",
+        "evm",
+        "foundry",
+        "slither"
+      ],
       "source": "./plugins/solidity-audit"
     }
   ]
