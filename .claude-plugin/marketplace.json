@@ -10,6 +10,54 @@
   },
   "plugins": [
     {
+      "name": "build-web3",
+      "description": "Build Web3 dApps and smart contracts from scratch through shipping. Full lifecycle for EVM/Base development with Solidity, Foundry, Next.js, and viem/wagmi. Covers contracts, frontend, testing, security analysis, and deployment.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Sage Protocol",
+        "email": "team@sageprotocol.io"
+      },
+      "homepage": "https://sageprotocol.io",
+      "tags": [
+        "web3",
+        "solidity",
+        "foundry",
+        "next.js",
+        "viem",
+        "wagmi",
+        "smart-contracts",
+        "dapp"
+      ],
+      "source": "./plugins/build-web3"
+    },
+    {
+      "name": "claude-flow",
+      "description": "Enterprise AI agent orchestration plugin with 150+ commands, 74+ specialized agents, SPARC methodology, swarm coordination, GitHub integration, and neural training capabilities",
+      "version": "2.5.0",
+      "author": {
+        "name": "rUv",
+        "email": "ruv@ruv.net"
+      },
+      "homepage": "https://sageprotocol.io",
+      "tags": [
+        "ai-agents",
+        "swarm-intelligence",
+        "orchestration",
+        "sparc-methodology",
+        "github-automation",
+        "neural-training",
+        "mcp-integration",
+        "enterprise",
+        "workflow-automation",
+        "multi-agent",
+        "coordination",
+        "tdd",
+        "code-review",
+        "performance-optimization"
+      ],
+      "source": "./plugins/ruvnet-claude-flow"
+    },
+    {
       "name": "sage-protocol-cli",
       "description": "Automate Sage Protocol governance workflows using the CLI. Create DAOs, manage prompts, run governance proposals, create bounties, and participate in permissionless collaboration on prompts.",
       "version": "1.0.0",

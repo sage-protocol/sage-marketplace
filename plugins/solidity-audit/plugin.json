@@ -18,21 +18,7 @@
     "foundry",
     "slither"
   ],
-  "entry": "SKILL.md",
-  "type": "skill",
-  "capabilities": [
-    "security-analysis",
-    "vulnerability-detection",
-    "threat-modeling",
-    "invariant-extraction",
-    "poc-generation"
-  ],
-  "tools": {
-    "optional": [
-      "hound",
-      "slither",
-      "semgrep",
-      "foundry"
-    ]
-  }
+  "agents": [
+    "./SKILL.md"
+  ]
 }

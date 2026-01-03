@@ -1,0 +1,25 @@
+{
+  "name": "build-web3",
+  "description": "Build Web3 dApps and smart contracts from scratch through shipping. Full lifecycle for EVM/Base development with Solidity, Foundry, Next.js, and viem/wagmi. Covers contracts, frontend, testing, security analysis, and deployment.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Sage Protocol",
+    "email": "team@sageprotocol.io"
+  },
+  "license": "MIT",
+  "keywords": [
+    "web3",
+    "solidity",
+    "foundry",
+    "next.js",
+    "viem",
+    "wagmi",
+    "smart-contracts",
+    "dapp"
+  ],
+  "homepage": "https://github.com/sage-protocol",
+  "repository": "https://github.com/sage-protocol/sage-protocol",
+  "agents": [
+    "./SKILL.md"
+  ]
+}
