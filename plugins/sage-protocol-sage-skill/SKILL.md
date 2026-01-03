@@ -8,7 +8,7 @@ description: Command-free Sage Protocol experience. Manage libraries, DAOs, gove
 Install this skill directly in Claude Code:
 
 ```
-/plugin add https://api.sageprotocol.io/git/skill/bafkreiaksc2zktvzvha37p44oxpy334bz4l7mvyw5n4vcgpgcvub3zhf7a.git
+/plugin add https://api.sageprotocol.io/git/skill/bafkreihi4imwwisa2opauy7qv2o7d6t3u26cb4bceen7l2wt2szyc2kl5e.git
 ```
 
 Or via Sage CLI:

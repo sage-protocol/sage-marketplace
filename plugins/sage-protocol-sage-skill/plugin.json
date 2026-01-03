@@ -35,6 +35,5 @@
     "./workflows/token-delegation.md",
     "./workflows/treasury-operations.md",
     "./workflows/trust-signals.md"
-  ],
-  "strict": false
+  ]
 }
