@@ -9,30 +9,80 @@ tags:
   - smart-contracts
 ---
 
-# Solidity Audit Skill (Hound CLI)
+# Solidity Audit Skill (Hound-Powered)
+
+## Installation
+
+### Clone Hound
+
+```bash
+# Clone the repository
+git clone https://github.com/muellerberndt/hound.git ~/Dev/hound
+cd ~/Dev/hound
+
+# Create virtual environment and install dependencies
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Verify installation
+./hound.py --help
+```
+
+### Create CLI Wrapper (Optional)
+
+For convenience, create a wrapper script:
+
+```bash
+cat > /usr/local/bin/hound << 'EOF'
+#!/bin/bash
+exec ~/Dev/hound/.venv/bin/python ~/Dev/hound/hound.py "$@"
+EOF
+chmod +x /usr/local/bin/hound
+```
+
+### Configure API Keys
+
+```bash
+# Required: OpenAI API key (primary model provider)
+export OPENAI_API_KEY=your_key_here
+
+# Optional: Anthropic for alternative models
+export ANTHROPIC_API_KEY=your_key_here
+
+# Optional: Google Gemini
+export GOOGLE_API_KEY=your_key_here
+```
+
+Or use `config.yaml`:
+
+```bash
+cp ~/Dev/hound/config.yaml.example ~/Dev/hound/config.yaml
+# Edit to configure providers/models
+```
+
+---
 
 ## Quick Start
 
-**Hound CLI** is the primary interface. Run directly in terminal:
-
 ```bash
 # 1. Create project
-hound.py project create my-audit /path/to/contracts
+hound project create myaudit /path/to/contracts
 
-# 2. Build knowledge graphs
-hound.py graph build my-audit --auto --files "src/*.sol" --iterations 3
+# 2. Build knowledge graphs (with file whitelist for best results)
+hound graph build myaudit --auto --files "src/Token.sol,src/Vault.sol,src/Governor.sol"
 
-# 3. Run sweep analysis (Phase 1)
-hound.py agent audit my-audit --mode sweep
+# 3. Run sweep (Phase 1: broad coverage)
+hound agent audit myaudit --mode sweep
 
-# 4. Run intuition analysis (Phase 2)
-hound.py agent audit my-audit --mode intuition --time-limit 300
+# 4. Run intuition (Phase 2: deep analysis)
+hound agent audit myaudit --mode intuition --time-limit 60
 
-# 5. Finalize findings
-hound.py finalize my-audit
+# 5. Finalize findings (QA review)
+hound finalize myaudit
 
 # 6. Generate report
-hound.py report my-audit --output report.html
+hound report myaudit --output ./audit/report.html
 ```
 
 ---
@@ -40,303 +90,213 @@ hound.py report my-audit --output report.html
 ## Prime Directive
 
 Be evidence-driven:
-- No "this looks vulnerable" without concrete call path + state assumptions
-- Always cite file/function/lines (or minimal code excerpt)
-- Prefer Foundry test to justify severity
-- Use Hound's knowledge graphs to trace control/data flow systematically
+- No "this looks vulnerable" without a concrete call path + state assumptions.
+- Always cite file/function/lines (or a minimal code excerpt).
+- Prefer reproduction via Foundry test to justify severity.
+- Use Hound's knowledge graphs to trace control/data flow systematically.
 
 ---
 
-## CLI Command Reference
+## Complete CLI Workflow
 
-### Project Management
+### Step 1: Create a Project
+
+Projects organize audits and store all analysis data under `~/.hound/projects/`:
 
 ```bash
-# Create project
-hound.py project create <name> <source_path> [--description "text"]
+# Create project from local code
+hound project create myaudit /path/to/contracts
 
-# List projects
-hound.py project ls
+# List all projects
+hound project ls
 
-# Show project info and coverage
-hound.py project info <name>
-hound.py project coverage <name>
+# View project details and coverage
+hound project info myaudit
 
-# List hypotheses (findings)
-hound.py project hypotheses <name> [--details]
-
-# Set hypothesis status manually
-hound.py project set-hypothesis-status <name> <hyp_id> confirmed|rejected
-
-# Show sessions
-hound.py project sessions <name> [--list]
-
-# Delete project
-hound.py project delete <name> [--force]
+# Get project path
+hound project path myaudit
 ```
 
-### Knowledge Graph Building
+**Project structure:**
+```
+~/.hound/projects/myaudit/
+  ├── project.json          # Configuration
+  ├── graphs/               # Knowledge graphs
+  ├── manifest/             # Code ingestion data
+  ├── reports/              # Generated reports
+  ├── sessions/             # Audit sessions
+  └── hypotheses.json       # Vulnerability findings
+```
+
+### Step 2: Build Knowledge Graphs
+
+Hound builds aspect-oriented knowledge graphs for security analysis:
 
 ```bash
-# AUTO-BUILD (Recommended) - Creates 5 default graphs
-hound.py graph build <project> --auto \
-  --files "src/A.sol,src/B.sol" \
-  --iterations 3
+# Recommended: Auto-generate 5 graphs with file whitelist
+hound graph build myaudit --auto \
+  --files "src/Token.sol,src/Vault.sol,src/Governor.sol"
 
-# Build with specific focus
-hound.py graph build <project> --auto \
-  --focus "access control,value flows" \
-  --files "contracts/*.sol"
+# Initialize only SystemArchitecture (minimal)
+hound graph build myaudit --init --files "src/*.sol"
 
-# Initialize baseline only (SystemArchitecture)
-hound.py graph build <project> --init \
-  --files "src/*.sol" \
-  --iterations 2
-
-# Build custom graph
-hound.py graph build <project> \
-  --with-spec "Reentrancy call graph" \
-  --files "src/*.sol"
-
-# Refine existing graphs
-hound.py graph refine <project> --all --iterations 2
+# Add custom graph with specific focus
+hound graph custom myaudit \
+  "Access control flow showing role hierarchies and permission checks" \
+  --iterations 2 \
+  --files "src/governance/*.sol"
 
 # List graphs
-hound.py graph ls <project>
+hound graph ls myaudit
 
-# Export visualization
-hound.py graph export <project> --output graph.html --open
+# Refine existing graphs
+hound graph refine myaudit --all --iterations 2
 ```
 
-**Key Options:**
-- `--files "path1,path2"` - Whitelist files (STRONGLY RECOMMENDED)
-- `--iterations N` - Refinement iterations (default: 3)
-- `--auto` - Auto-generate 5 default graphs
-- `--focus "topic"` - Focus graph building on specific areas
+**Graph types generated by `--auto`:**
+- SystemArchitecture - Contract structure and dependencies
+- RoleBasedAccessControl - Roles, modifiers, permissions
+- EconomicAndBountyFlow - Token/ETH flows, value movements
+- FactoryWiringAndInitialization - Deployment patterns
+- Custom aspect graphs based on codebase
 
-### Autonomous Audit
+**Important**: Always use `--files` whitelist for best results. Large repos without whitelists may exceed context limits.
+
+### Step 3: Run the Audit
+
+The audit uses a two-phase approach with scout/strategist model pattern:
 
 ```bash
-# SWEEP MODE - Systematic broad analysis (Phase 1)
-hound.py agent audit <project> --mode sweep
+# Phase 1: Sweep - Systematic broad coverage
+hound agent audit myaudit --mode sweep
 
-# INTUITION MODE - Deep targeted exploration (Phase 2)
-hound.py agent audit <project> --mode intuition --time-limit 300
+# Phase 2: Intuition - Deep targeted analysis
+hound agent audit myaudit --mode intuition --time-limit 60
+
+# With telemetry (connects to Chatbot UI at http://127.0.0.1:5280)
+hound agent audit myaudit --mode intuition --telemetry
 
 # Resume existing session
-hound.py agent audit <project> --session <session_id> --mode intuition
+hound agent audit myaudit --session <session_id>
 
-# With telemetry UI (interactive steering)
-hound.py agent audit <project> --mode sweep --telemetry
-# Then open http://127.0.0.1:5280
-
-# With custom mission
-hound.py agent audit <project> \
-  --mode intuition \
-  --mission "Find reentrancy and access control bugs"
-
-# Custom models
-hound.py agent audit <project> \
-  --mode sweep \
-  --platform openai \
-  --model gpt-5 \
-  --strategist-model claude-3-opus
+# Use specific models
+hound agent audit myaudit \
+  --model gpt-4o \
+  --strategist-model gpt-5 \
+  --mode sweep
 ```
 
-**Audit Parameters:**
-| Flag | Description |
-|------|-------------|
-| `--mode sweep\|intuition` | Sweep (broad) or Intuition (deep) |
+**Key parameters:**
+| Parameter | Description |
+|-----------|-------------|
+| `--mode sweep` | Phase 1: Broad systematic coverage |
+| `--mode intuition` | Phase 2: Deep targeted exploration |
 | `--time-limit N` | Stop after N minutes |
-| `--iterations N` | Max iterations per investigation |
-| `--session <id>` | Attach to existing session |
-| `--telemetry` | Enable live UI at http://127.0.0.1:5280 |
-| `--mission "text"` | Overarching audit mission |
+| `--iterations N` | Max iterations per investigation (default: 30) |
+| `--plan-n N` | Investigations per planning batch (default: 5) |
+| `--model` | Scout model (e.g., gpt-4o, gpt-5-mini) |
+| `--strategist-model` | Deep analysis model (e.g., gpt-5, gpt-5.1) |
+| `--session` | Resume specific session |
+| `--new-session` | Create fresh session |
+| `--telemetry` | Enable live monitoring UI |
 | `--debug` | Save LLM interactions to `.hound_debug/` |
 
-### Targeted Investigation
+### Step 4: Monitor Progress
 
 ```bash
-# Single focused investigation
-hound.py agent investigate \
-  "Check for reentrancy in withdraw function" \
-  <project> \
+# View hypotheses (findings)
+hound project hypotheses myaudit
+
+# Detailed hypothesis info
+hound project hypotheses myaudit --details
+
+# Check coverage statistics
+hound project coverage myaudit
+
+# List audit sessions
+hound project sessions myaudit --list
+
+# View investigation plan
+hound project plan myaudit
+```
+
+**Understanding hypotheses:**
+- **Confidence**: 0.0-1.0 likelihood of real issue
+- **Status**: proposed → investigating → confirmed/rejected
+- **Severity**: critical, high, medium, low
+- **Type**: reentrancy, access-control, logic-error, etc.
+
+### Step 5: Targeted Investigations
+
+For specific concerns without full planning:
+
+```bash
+# Investigate specific concern
+hound agent investigate "Check for reentrancy in withdraw function" myaudit
+
+# Quick investigation
+hound agent investigate "Analyze access control in admin functions" myaudit \
   --iterations 5
+
+# With specific models
+hound agent investigate "Review emergency functions" myaudit \
+  --model gpt-4o \
+  --strategist-model gpt-5
 ```
 
-### Finalize & Report
+### Step 6: Finalize Findings (QA)
+
+A reasoning model reviews all hypotheses:
 
 ```bash
-# Finalize (QA review to confirm/reject findings)
-hound.py finalize <project>
-hound.py finalize <project> --threshold 0.7
+# Run finalization
+hound finalize myaudit
 
-# Generate report
-hound.py report <project> --output report.html
-hound.py report <project> --format markdown --output REPORT.md
-hound.py report <project> --all  # Include rejected findings
+# Include below-threshold findings
+hound finalize myaudit --include-below-threshold
+
+# Custom confidence threshold
+hound finalize myaudit -t 0.7 --model gpt-4o
 ```
 
----
+**What happens:**
+1. Reasoning model reviews each hypothesis
+2. Evaluates evidence and code context
+3. Updates status to confirmed/rejected
+4. Adjusts confidence scores
+5. Prepares findings for report
 
-## Workflow: Full Audit Pipeline
-
-### 1. INGEST: Create Project & Build Graphs
+### Step 7: Generate PoC Prompts
 
 ```bash
-# Create project pointing to contracts
-hound.py project create protocol-audit ./contracts \
-  --description "Protocol v2 security audit"
+# Generate PoC prompts for confirmed vulnerabilities
+hound poc make-prompt myaudit
 
-# Build all graphs with file whitelist
-hound.py graph build protocol-audit --auto \
-  --files "src/core/*.sol,src/governance/*.sol" \
-  --iterations 3
+# For specific hypothesis
+hound poc make-prompt myaudit --hypothesis hyp_12345
+
+# Import existing PoC files
+hound poc import myaudit hyp_12345 exploit.sol test.js \
+  --description "Demonstrates reentrancy exploit"
+
+# List PoCs
+hound poc list myaudit
 ```
 
-**Graphs produced:**
-- **SystemArchitecture**: Contract inheritance, modules, external calls
-- **AccessControl**: Roles, modifiers, privilege escalation paths
-- **ValueFlow**: Token/ETH movements, balance-affecting state changes
-- **CallGraph**: Function relationships and call chains
-- **DataFlow**: Variable dependencies and taint propagation
-
-### 2. ANALYZE: Run Sweep + Intuition
+### Step 8: Generate Report
 
 ```bash
-# Phase 1: Systematic sweep (checks OWASP patterns)
-hound.py agent audit protocol-audit --mode sweep
+# HTML report (default)
+hound report myaudit
 
-# Check coverage
-hound.py project coverage protocol-audit
+# Include all hypotheses (not just confirmed)
+hound report myaudit --all
 
-# Phase 2: Deep exploration of high-risk areas
-hound.py agent audit protocol-audit \
-  --mode intuition \
-  --time-limit 600
-```
+# Custom output path
+hound report myaudit --output ./audit/report.html
 
-### 3. REVIEW: Check Hypotheses
-
-```bash
-# List all findings with details
-hound.py project hypotheses protocol-audit --details
-
-# View specific hypothesis
-hound.py project hypotheses protocol-audit | grep "hyp_abc123"
-```
-
-**Hypothesis statuses:**
-- `proposed` - Agent identified potential issue
-- `confirmed` - Validated as real vulnerability
-- `rejected` - Determined to be false positive
-
-### 4. FINALIZE: QA Review
-
-```bash
-# Run QA to validate findings (adjusts confidence, confirms/rejects)
-hound.py finalize protocol-audit
-
-# With higher threshold (more strict)
-hound.py finalize protocol-audit --threshold 0.7
-```
-
-### 5. REPORT: Generate Output
-
-```bash
-# HTML report (recommended)
-hound.py report protocol-audit \
-  --output ./audit/report.html \
-  --title "Protocol v2 Security Audit" \
-  --auditors "Security Team"
-
-# Markdown for GitHub
-hound.py report protocol-audit \
-  --format markdown \
-  --output ./audit/REPORT.md
-```
-
----
-
-## Project Directory Structure
-
-Projects stored in `~/.hound/projects/<name>/`:
-
-```
-~/.hound/projects/my-audit/
-├── project.json          # Metadata
-├── hypotheses.json       # Findings (editable!)
-├── coverage_index.json   # Coverage tracking
-├── graphs/
-│   ├── graph_SystemArchitecture.json
-│   ├── graph_AccessControl.json
-│   └── visualization.html
-├── sessions/             # Audit sessions
-├── manifest/             # Source manifest + code cards
-└── reports/              # Generated reports
-```
-
-**Direct Hypothesis Editing:**
-```bash
-# View hypotheses file
-cat ~/.hound/projects/my-audit/hypotheses.json | jq '.hypotheses | keys | length'
-
-# Add hypothesis manually (use jq to merge)
-jq -s '.[0].hypotheses *= .[1] | .[0]' hypotheses.json new_hyp.json > merged.json
-```
-
----
-
-## Configuration (config.yaml)
-
-```yaml
-# ~/.hound/config.yaml or ./config.yaml
-openai:
-  api_key_env: OPENAI_API_KEY
-
-anthropic:
-  api_key_env: ANTHROPIC_API_KEY
-
-models:
-  graph:
-    provider: gemini
-    model: gemini-2.5-pro
-  scout:
-    provider: openai
-    model: gpt-5-mini
-  strategist:
-    provider: openai
-    model: gpt-5
-  finalize:
-    provider: openai
-    model: gpt-5
-```
-
-**Environment Variables:**
-```bash
-export OPENAI_API_KEY=sk-...
-export ANTHROPIC_API_KEY=sk-ant-...
-export GOOGLE_API_KEY=...
-```
-
----
-
-## Common Query Patterns
-
-Run targeted investigations:
-
-```bash
-# Reentrancy
-hound.py agent investigate "Check for external calls before state updates" my-audit
-
-# Access Control
-hound.py agent investigate "What functions lack access control modifiers?" my-audit
-
-# Flash Loans
-hound.py agent investigate "Can any function be exploited via flash loan?" my-audit
-
-# Upgrades
-hound.py agent investigate "Are there storage collision risks in proxy pattern?" my-audit
+# Markdown format
+hound report myaudit --format markdown --output ./audit/REPORT.md
 ```
 
 ---
@@ -353,57 +313,375 @@ hound.py agent investigate "Are there storage collision risks in proxy pattern?"
 
 ---
 
-## Fallback: MCP Mode (Optional)
+## Model Configuration
 
-If using Claude Desktop with MCP:
+### Recommended Models
 
-```bash
-# Start Hound MCP server
-scroll mcp hub start hound
+| Role | Model | Use Case |
+|------|-------|----------|
+| Scout | gpt-5-mini, gpt-4o | Fast exploration, code analysis |
+| Strategist | gpt-5, gpt-5.1 | Deep reasoning, hypothesis formation |
+| Finalize | gpt-5, o1 | QA review, final validation |
 
-# Then use MCP tools in Claude:
-# hound_create_project, hound_build_graph, hound_query, etc.
-```
-
-**Note**: MCP mode has the same capabilities but requires Claude Desktop integration. CLI mode is standalone and more flexible for automation.
-
----
-
-## Proof-of-Concept Management
+### Provider Options
 
 ```bash
-# Generate PoC prompts for confirmed vulnerabilities
-hound.py poc make-prompt my-audit
+# OpenAI (default)
+--platform openai --model gpt-5-mini
 
-# Import PoC files
-hound.py poc import my-audit hyp_abc123 exploit.sol test.js \
-  --description "Demonstrates reentrancy"
+# Anthropic
+--platform anthropic --model claude-sonnet-4-20250514
 
-# List PoCs
-hound.py poc list my-audit
+# Google Gemini
+--platform gemini --model gemini-2.0-flash
 ```
 
 ---
 
-## Quick Reference Card
+## Subagent Delegation Pattern
 
-| Task | Command |
-|------|---------|
-| Create project | `hound.py project create NAME PATH` |
-| Build graphs | `hound.py graph build NAME --auto --files "*.sol"` |
-| Sweep audit | `hound.py agent audit NAME --mode sweep` |
-| Deep audit | `hound.py agent audit NAME --mode intuition` |
-| Check findings | `hound.py project hypotheses NAME --details` |
-| Finalize | `hound.py finalize NAME` |
-| Report | `hound.py report NAME --output report.html` |
-| Investigate | `hound.py agent investigate "question" NAME` |
+Use parallel subagents to accelerate audit work. Each agent should have:
+- A precise objective (single contract, vulnerability class, or phase)
+- Specific file paths or project name
+- Clear output format expectations
+- Time/iteration bounds for predictable execution
+
+### Pattern 1: Parallel Contract Analysis
+
+When auditing multiple high-risk contracts, spawn parallel agents:
+
+```
+Launch 3 agents in parallel using Task tool:
+
+Agent 1 - Treasury Analysis:
+  subagent_type: "general-purpose"
+  prompt: |
+    Audit the treasury contracts for high-risk vulnerabilities.
+
+    Run: cd /path/to/hound && ./hound.py agent investigate \
+      "Analyze treasury fund flows, withdrawal patterns, and access control" \
+      sage-audit --iterations 10
+
+    Focus on: reentrancy, access control, fund loss scenarios.
+    Return: List of hypotheses with severity and evidence.
+
+Agent 2 - Governance Analysis:
+  subagent_type: "general-purpose"
+  prompt: |
+    Audit the governance contracts for privilege escalation.
+
+    Run: cd /path/to/hound && ./hound.py agent investigate \
+      "Analyze governance voting, proposal execution, and timelock controls" \
+      sage-audit --iterations 10
+
+    Focus on: voting manipulation, proposal injection, timelock bypass.
+    Return: List of hypotheses with severity and evidence.
+
+Agent 3 - Token Analysis:
+  subagent_type: "general-purpose"
+  prompt: |
+    Audit the token contracts for economic vulnerabilities.
+
+    Run: cd /path/to/hound && ./hound.py agent investigate \
+      "Analyze token minting, burning, transfer hooks, and fee logic" \
+      sage-audit --iterations 10
+
+    Focus on: inflation bugs, fee bypass, transfer restrictions.
+    Return: List of hypotheses with severity and evidence.
+```
+
+### Pattern 2: Two-Phase Parallel Audit
+
+Run sweep and intuition phases with different model configurations:
+
+```
+# Sequential phases, but parallelizable across projects
+
+Agent 1 - Fast Sweep (broad coverage):
+  prompt: |
+    Run Phase 1 sweep audit on sage-audit project.
+
+    cd ~/Dev/hound && ./hound.py agent audit sage-audit \
+      --mode sweep \
+      --model gpt-4o-mini \
+      --time-limit 30
+
+    Return: Coverage percentage and hypothesis count.
+
+Agent 2 - Deep Intuition (after sweep completes):
+  prompt: |
+    Run Phase 2 intuition audit on sage-audit project.
+
+    cd ~/Dev/hound && ./hound.py agent audit sage-audit \
+      --mode intuition \
+      --model gpt-4o \
+      --strategist-model gpt-5 \
+      --time-limit 60
+
+    Return: New hypotheses discovered with confidence scores.
+```
+
+### Pattern 3: Parallel PoC Development
+
+After findings are confirmed, spawn agents to write exploit tests:
+
+```
+For each confirmed hypothesis, launch a PoC agent:
+
+Agent per Hypothesis:
+  subagent_type: "general-purpose"
+  prompt: |
+    Write a Foundry PoC test for hypothesis: {hypothesis_id}
+
+    Vulnerability: {title}
+    Location: {file_path}:{line_numbers}
+    Description: {description}
+
+    Create test file: tests/audit/{hypothesis_id}.t.sol
+
+    Requirements:
+    1. Setup vulnerable state
+    2. Execute exploit steps
+    3. Assert unexpected outcome (fund loss, access gained, etc.)
+    4. Include comments explaining each step
+
+    Run: forge test --match-path tests/audit/{hypothesis_id}.t.sol -vvv
+
+    Return: Test file path and pass/fail status.
+```
+
+### Pattern 4: Manual Review Subagents
+
+When Hound is unavailable, use parallel manual review agents:
+
+```
+Launch parallel agents for each vulnerability class:
+
+Agent 1 - Reentrancy Hunter:
+  subagent_type: "general-purpose"
+  prompt: |
+    Search for reentrancy vulnerabilities in /path/to/contracts.
+
+    1. Find all external calls: grep -rn "\.call\|\.transfer\|safeTransfer"
+    2. For each, check if state updates happen AFTER the call
+    3. Check for cross-function reentrancy via shared state
+    4. Check for read-only reentrancy in view functions
+
+    Return findings in format:
+    - File:Line - Description - Severity - Evidence
+
+Agent 2 - Access Control Auditor:
+  subagent_type: "general-purpose"
+  prompt: |
+    Search for access control issues in /path/to/contracts.
+
+    1. Find all public/external functions
+    2. Check each for missing onlyOwner/onlyRole modifiers
+    3. Trace role assignment and escalation paths
+    4. Check initialization functions for protection
+
+    Return findings in format:
+    - File:Line - Description - Severity - Evidence
+
+Agent 3 - Fund Flow Tracer:
+  subagent_type: "general-purpose"
+  prompt: |
+    Trace fund flows in /path/to/contracts.
+
+    1. Find all payable functions and token transfers
+    2. Map entry points (deposits) and exit points (withdrawals)
+    3. Check for stuck funds scenarios
+    4. Verify balance checks before transfers
+
+    Return findings in format:
+    - File:Line - Description - Severity - Evidence
+```
+
+### Pattern 5: Report Compilation
+
+After all agents complete, compile results:
+
+```
+Final Agent - Report Compiler:
+  subagent_type: "general-purpose"
+  prompt: |
+    Compile audit findings from Hound project: sage-audit
+
+    1. Run: cd ~/Dev/hound && ./hound.py finalize sage-audit
+    2. Run: ./hound.py report sage-audit --output ./audit/report.html
+    3. List all confirmed hypotheses with:
+       ./hound.py project hypotheses sage-audit --details
+
+    Return:
+    - Total findings by severity (critical/high/medium/low)
+    - Report file path
+    - Key recommendations summary
+```
+
+### Subagent Best Practices
+
+1. **Bounded execution**: Always set `--time-limit` or `--iterations`
+2. **Specific scope**: One contract, one vulnerability class, or one phase per agent
+3. **Clear outputs**: Define exact return format (findings list, file paths, metrics)
+4. **Error handling**: Agents should report if Hound/tools are unavailable
+5. **Session isolation**: Use `--new-session` for independent work
+6. **Result aggregation**: Final agent should compile and deduplicate findings
+
+---
+
+## Fallback: Manual Analysis (No Hound)
+
+When Hound is unavailable:
+
+### Step 1: Identify High-Risk Contracts
+
+```bash
+# Find contracts (excluding mocks/tests)
+find ./contracts -name "*.sol" ! -path "*/mocks/*" ! -path "*/test/*"
+```
+
+Focus on:
+- **Fund handlers**: Treasury, payment routers, tokens
+- **Access control**: Factory, governance, admin functions
+- **Proxies**: Diamond patterns, upgradeables
+- **External calls**: DEX integrations, oracles
+
+### Step 2: Manual Vulnerability Checklist
+
+#### Reentrancy (CRITICAL)
+```bash
+grep -n "\.call\|\.transfer\|\.send\|safeTransfer" contracts/*.sol
+```
+- [ ] External calls before state updates (CEI violation)
+- [ ] Cross-function reentrancy
+- [ ] Cross-contract reentrancy
+- [ ] Read-only reentrancy
+
+#### Access Control (HIGH)
+```bash
+grep -n "function.*public\|function.*external" contracts/*.sol
+```
+- [ ] Missing access modifiers
+- [ ] Privilege escalation paths
+- [ ] Unprotected initialization
+- [ ] Two-step ownership transfer
+
+#### Fund Handling (CRITICAL)
+- [ ] Unchecked transfer return values
+- [ ] Overflow in balance calculations
+- [ ] Missing balance checks
+- [ ] Stuck funds scenarios
+
+#### Oracle/Price (HIGH)
+- [ ] Spot price without TWAP
+- [ ] Missing staleness checks
+- [ ] Single oracle dependency
+- [ ] Flash loan vulnerable calculations
+
+#### Proxy/Upgrade (HIGH)
+- [ ] Storage collision
+- [ ] Re-initialization possible
+- [ ] Function selector clashes
+- [ ] Delegatecall to untrusted addresses
+
+### Step 3: Create Foundry PoC
+
+```solidity
+// test/audit/VulnerabilityName.t.sol
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+import "../src/VulnerableContract.sol";
+
+contract VulnerabilityTest is Test {
+    VulnerableContract target;
+
+    function setUp() public {
+        target = new VulnerableContract();
+    }
+
+    function test_exploit() public {
+        // Demonstrate vulnerability
+        // Assert unexpected outcome
+    }
+}
+```
+
+Run: `forge test --match-path test/audit/ -vvv`
+
+---
+
+## Static Analysis Tools
+
+### Slither
+```bash
+pip install slither-analyzer
+slither . --filter-paths "mocks|test|lib"
+slither . --print human-summary
+slither . --detect reentrancy-eth,unchecked-transfer
+```
+
+### Semgrep
+```bash
+semgrep --config "p/smart-contracts" .
+```
+
+### Foundry
+```bash
+forge build --extra-output storageLayout
+forge inspect Contract storageLayout
+```
+
+---
+
+## Common Vulnerability Patterns
+
+### Reentrancy
+```solidity
+// VULNERABLE
+function withdraw() external {
+    uint256 amount = balances[msg.sender];
+    (bool success,) = msg.sender.call{value: amount}("");
+    balances[msg.sender] = 0;  // State after call!
+}
+
+// FIXED (CEI)
+function withdraw() external {
+    uint256 amount = balances[msg.sender];
+    balances[msg.sender] = 0;  // State FIRST
+    (bool success,) = msg.sender.call{value: amount}("");
+    require(success);
+}
+```
+
+### Missing Access Control
+```solidity
+// VULNERABLE
+function setAdmin(address _admin) external {
+    admin = _admin;
+}
+
+// FIXED
+function setAdmin(address _admin) external onlyOwner {
+    admin = _admin;
+}
+```
+
+### Unchecked Transfer
+```solidity
+// VULNERABLE
+IERC20(token).transfer(recipient, amount);
+
+// FIXED
+SafeERC20.safeTransfer(IERC20(token), recipient, amount);
+```
 
 ---
 
 ## Compound: Capture Learnings
 
-After finishing:
-1. Convert confirmed bugs into regression/invariant tests
-2. Add checklist items for new patterns discovered
-3. Update `./audit/LESSONS.md` with key takeaways
-4. Consider contributing patterns back to Hound's knowledge base
+After audit completion:
+1. Convert confirmed bugs into regression tests
+2. Add new patterns to this checklist
+3. Document lessons in `./audit/LESSONS.md`
+4. Consider contributing findings to public databases
