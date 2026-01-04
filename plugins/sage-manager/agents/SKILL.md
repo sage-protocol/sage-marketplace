@@ -40,6 +40,11 @@ If scroll MCP is registered, these tools are available:
 - `mcp__scroll__hub_list_servers` - List available MCP servers
 - `mcp__scroll__hub_start_server` - Start external MCP server
 - `mcp__scroll__get_project_context` - Get project state
+- `mcp__scroll__chat_send` - Send message to chat room
+- `mcp__scroll__chat_history` - Get chat room history
+- `mcp__scroll__chat_watch` - Watch room for new messages
+- `mcp__scroll__chat_info` - Get room info and stats
+- `mcp__scroll__search` - Full-text search across prompts, skills, libraries
 
 **Status Check (load from ~/.config/sage-manager/cli-status.json):**
 ```json
@@ -60,6 +65,8 @@ Route operations based on backend availability and operation type:
 |---------|---------------|-----------------|-----------------|
 | Libraries | `mcp__scroll__list_libraries` | `sage library push` | scroll (read), sage (write) |
 | Prompts | `mcp__scroll__search_prompts` | `sage prompts publish` | scroll (read), sage (write) |
+| Search | `mcp__scroll__search` | N/A | scroll |
+| Chat | `mcp__scroll__chat_history` | `mcp__scroll__chat_send` | scroll (full) |
 | Governance | `mcp__scroll__list_proposals` | `sage governance vote` | scroll (read), sage (write) |
 | Voting Power | `mcp__scroll__get_voting_power` | N/A | scroll |
 | Bounties | `sage bounty list --json` | `sage bounty create` | sage (full) |
@@ -78,6 +85,10 @@ Route operations based on backend availability and operation type:
 | Search prompts | `scroll search <query>` | `sage prompts search <query>` |
 | Sync library | `scroll sync` | `sage library sync` |
 | Get context | `scroll context` | `sage doctor` |
+| Chat send | `scroll chat send <room> "<msg>"` | N/A |
+| Chat history | `scroll chat history <room>` | N/A |
+| Watch room | `scroll chat watch <room>` | N/A |
+| Search all | `scroll search <query>` | `sage discover search <query>` |
 
 **FALLBACK CHAIN:**
 
@@ -150,10 +161,16 @@ These require wallet signing which only sage CLI supports fully.
 │   └─────────────┘  └─────────────┘  └─────────────┘        │
 │                                                             │
 │   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│   │ 🎯 Bounties  │  │ 💰 Staking  │  │ 🔧 Setup    │        │
-│   │ Create &    │  │ Stake &     │  │ Wallet &    │        │
-│   │ claim       │  │ delegate    │  │ config      │        │
+│   │ 🎯 Bounties  │  │ 💰 Staking  │  │ 🔍 Search   │        │
+│   │ Create &    │  │ Stake &     │  │ Find        │        │
+│   │ claim       │  │ delegate    │  │ prompts     │        │
 │   └─────────────┘  └─────────────┘  └─────────────┘        │
+│                                                             │
+│   ┌─────────────┐  ┌─────────────┐                         │
+│   │ 💬 Chat     │  │ 🔧 Setup    │                         │
+│   │ Community   │  │ Wallet &    │                         │
+│   │ discussions │  │ config      │                         │
+│   └─────────────┘  └─────────────┘                         │
 │                                                             │
 │   Or just describe what you need...                         │
 │                                                             │
@@ -199,6 +216,11 @@ Accept free-form user input and map to visual workflows:
 | "create a DAO" | → Open DAO creation wizard |
 | "manage my vault" | → Open Vault library manager |
 | "delegate tokens" | → Open Delegation interface |
+| "search for prompts" | → Open Search interface |
+| "find skills about X" | → Search skills with query |
+| "chat with the community" | → Open Chat interface |
+| "send a message to the DAO" | → Open DAO Chat room |
+| "what's happening in global chat" | → Show global chat history |
 
 When intent is ambiguous, present clarifying choices visually:
 
@@ -324,6 +346,72 @@ When user selects "Create Bounty":
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### WORKFLOW: Search (🔍)
+
+```
+┌─ Search ────────────────────────────────────────────────────┐
+│                                                             │
+│  🔍 [_______________________________] [Search]              │
+│                                                             │
+│  Filter by:  [📦 Libraries]  [📝 Prompts]  [⚡ Skills]       │
+│                                                             │
+│  ─── Results ───                                            │
+│  📝 auth-prompt - Authentication helper       [Install →]   │
+│  ⚡ oauth-skill - OAuth integration           [Install →]   │
+│  📦 security-lib - Security patterns         [View →]       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Backend:** Uses `scroll search <query>` or `mcp__scroll__search` for instant results.
+
+### WORKFLOW: Chat (💬)
+
+```
+┌─ Community Chat ────────────────────────────────────────────┐
+│                                                             │
+│  Select Room:                                               │
+│  [🌐 Global]  [🏛️ My DAOs ▼]  [📦 Libraries ▼]               │
+│                                                             │
+│  ─── Global Chat ───                                        │
+│  alice.eth: Has anyone tried the new auth prompt?           │
+│  bob.eth: Yes! Works great with OAuth                       │
+│  carol.eth: Just published a fix for the edge case          │
+│                                                             │
+│  [________________________________________] [Send →]        │
+│                                                             │
+│  [🔔 Watch Room]    [📜 Load More History]                   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Room Types:**
+- `global` - Public community chat
+- `dao:<address>` - DAO member discussions
+- `library:<id>` - Library-specific chat
+- `<cid>` - Content discussion threads
+
+**Backend:** Uses `scroll chat` commands or MCP chat tools.
+
+When user selects "Send message to DAO":
+
+```
+┌─ DAO Chat ──────────────────────────────────────────────────┐
+│                                                             │
+│  🏛️ Governance DAO                                          │
+│                                                             │
+│  ─── Recent Messages ───                                    │
+│  admin.eth: Proposal #12 is ready for review                │
+│  member.eth: I'll vote after checking the details           │
+│                                                             │
+│  Your message:                                              │
+│  [________________________________________]                 │
+│                                                             │
+│  [Cancel]                                    [Send →]       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 </visual_workflows>
 
 <execution_model>
@@ -411,6 +499,8 @@ Detailed workflow guides (load when user enters specific workflow):
 - Trust → workflows/trust-signals.md
 - Setup → workflows/setup-diagnostics.md
 - Prompts → workflows/prompts-projects.md
+- Search → workflows/search-discovery.md
+- Chat → workflows/community-chat.md
 </workflow_files>
 
 <technical_reference>
@@ -448,6 +538,21 @@ HIDDEN FROM USER - Only for internal command execution:
 - Start Daemon: `scroll daemon start`
 - Library Sync: `scroll sync`
 - Search: `scroll search <query>`
+- Search Skills: `scroll search <query> --skills`
+- Search Libraries: `scroll search <query> --libraries`
+- Chat Send: `scroll chat send <room> "<message>"`
+- Chat History: `scroll chat history <room>`
+- Chat History (limited): `scroll chat history <room> --limit 50`
+- Chat Watch: `scroll chat watch <room>`
+- Chat Unwatch: `scroll chat unwatch <room>`
+- Chat Watched: `scroll chat watched`
+- Chat Info: `scroll chat info <room>`
+
+**Room Type Formats:**
+- Global: `global`
+- DAO: `dao:<address>` (e.g., `dao:0x1234...`)
+- Library: `library:<id>`
+- Content: `<cid>` (any valid CID)
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>

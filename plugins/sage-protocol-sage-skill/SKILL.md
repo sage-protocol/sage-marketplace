@@ -102,6 +102,10 @@ Accept free-form user input and map to visual workflows:
 | "create a DAO" | → Open DAO creation wizard |
 | "manage my vault" | → Open Vault library manager |
 | "delegate tokens" | → Open Delegation interface |
+| "search for prompts" | → Open Search interface |
+| "find skills about X" | → Search skills with query |
+| "chat with the community" | → Open Chat interface |
+| "send a message to the DAO" | → Open DAO Chat room |
 
 When intent is ambiguous, present clarifying choices visually:
 
@@ -314,11 +318,14 @@ Detailed workflow guides (load when user enters specific workflow):
 - Trust → workflows/trust-signals.md
 - Setup → workflows/setup-diagnostics.md
 - Prompts → workflows/prompts-projects.md
+- Search → workflows/search-discovery.md
+- Chat → workflows/community-chat.md
 </workflow_files>
 
 <technical_reference>
 HIDDEN FROM USER - Only for internal command execution:
 
+**sage CLI (Node.js - Full Features):**
 CLI Installation: `npm install -g @sage-protocol/cli`
 Version Check: `sage --version`
 Wallet Connect: `sage wallet connect --type privy`
@@ -330,6 +337,25 @@ Library List: `sage library vault list`
 Publishing (personal DAOs use --exec for instant auto-vote/execute):
 - Personal DAO: `sage prompts publish --yes --exec`
 - Community DAO: `sage prompts publish --yes` (creates proposal)
+
+**scroll CLI (Rust - Fast Operations):**
+CLI Installation: `cargo install --git https://github.com/sage-protocol/scroll.git`
+Version Check: `scroll --version`
+Search: `scroll search <query>`
+Search Skills: `scroll search <query> --skills`
+Search Libraries: `scroll search <query> --libraries`
+Chat Send: `scroll chat send <room> "<message>"`
+Chat History: `scroll chat history <room>`
+Chat Watch: `scroll chat watch <room>`
+Chat Unwatch: `scroll chat unwatch <room>`
+Daemon Start: `scroll daemon start`
+MCP Start: `scroll mcp start`
+
+**Room Type Formats:**
+- Global: `global`
+- DAO: `dao:<address>` (e.g., `dao:0x1234...`)
+- Library: `library:<id>`
+- Content: `<cid>` (any valid CID)
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>
