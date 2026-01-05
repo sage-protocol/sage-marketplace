@@ -79,6 +79,31 @@
       "source": "./plugins/sage-protocol-sage-skill"
     },
     {
+      "name": "sage-node",
+      "description": "Full Sage Protocol Node.js CLI experience. Translates natural language to sage commands with auto-execution. Setup wallet, get tokens, manage libraries, governance, bounties - all through the CLI.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Sage Protocol",
+        "email": "team@sageprotocol.io"
+      },
+      "homepage": "https://sageprotocol.io",
+      "tags": [
+        "cli",
+        "sage",
+        "node",
+        "governance",
+        "dao",
+        "prompts",
+        "web3",
+        "wallet",
+        "privy",
+        "bounties",
+        "treasury",
+        "voting"
+      ],
+      "source": "./plugins/sage-node-skill"
+    },
+    {
       "name": "solidity-audit",
       "description": "Use when auditing Solidity/EVM smart contracts, triaging Slither/Semgrep results, building threat models/invariants, or producing an audit report with reproducible evidence. CLI-first with Hound knowledge graphs.",
       "version": "2.0.1",
