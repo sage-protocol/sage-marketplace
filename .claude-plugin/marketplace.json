@@ -58,27 +58,6 @@
       "source": "./plugins/ruvnet-claude-flow"
     },
     {
-      "name": "sage-protocol-cli",
-      "description": "Automate Sage Protocol governance workflows using the CLI. Create DAOs, manage prompts, run governance proposals, create bounties, and participate in permissionless collaboration on prompts.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Sage Protocol",
-        "email": "team@sageprotocol.io"
-      },
-      "homepage": "https://sageprotocol.io",
-      "tags": [
-        "governance",
-        "dao",
-        "prompts",
-        "web3",
-        "collaboration",
-        "bounties",
-        "treasury",
-        "voting"
-      ],
-      "source": "./plugins/sage-protocol-sage-skill"
-    },
-    {
       "name": "sage-node",
       "description": "Full Sage Protocol Node.js CLI experience. Translates natural language to sage commands with auto-execution. Setup wallet, get tokens, manage libraries, governance, bounties - all through the CLI.",
       "version": "1.0.0",
@@ -102,6 +81,27 @@
         "voting"
       ],
       "source": "./plugins/sage-node-skill"
+    },
+    {
+      "name": "sage-protocol-cli",
+      "description": "Automate Sage Protocol governance workflows using the CLI. Create DAOs, manage prompts, run governance proposals, create bounties, and participate in permissionless collaboration on prompts.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Sage Protocol",
+        "email": "team@sageprotocol.io"
+      },
+      "homepage": "https://sageprotocol.io",
+      "tags": [
+        "governance",
+        "dao",
+        "prompts",
+        "web3",
+        "collaboration",
+        "bounties",
+        "treasury",
+        "voting"
+      ],
+      "source": "./plugins/sage-protocol-sage-skill"
     },
     {
       "name": "solidity-audit",
