@@ -1,0 +1,29 @@
+{
+  "name": "sage-node",
+  "description": "Full Sage Protocol Node.js CLI experience. Translates natural language to sage commands with auto-execution. Setup wallet, get tokens, manage libraries, governance, bounties - all through the CLI.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Sage Protocol",
+    "email": "team@sageprotocol.io"
+  },
+  "homepage": "https://sageprotocol.io",
+  "repository": "https://github.com/sage-protocol/sage-cli",
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "sage",
+    "node",
+    "governance",
+    "dao",
+    "prompts",
+    "web3",
+    "wallet",
+    "privy",
+    "bounties",
+    "treasury",
+    "voting"
+  ],
+  "agents": [
+    "./SKILL.md"
+  ]
+}
