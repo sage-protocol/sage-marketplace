@@ -257,7 +257,7 @@ Full creator workflow:
 sage personal create
 
 # 2. Create and test prompt locally
-sage prompts new --type prompt --name "trading-strategy"
+sage prompts new --kind prompt --name "trading-strategy"
 # ... edit prompt ...
 
 # 3. Publish as premium

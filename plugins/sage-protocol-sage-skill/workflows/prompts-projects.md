@@ -21,8 +21,8 @@ sage library quickstart --name "My Library" --from-dir ./prompts/ --dry-run
 After quickstart:
 - Alias auto-saved (e.g., `my-library`)
 - Context auto-set to new DAO
-- Run `sage prompts publish --yes --exec` to publish updates (personal DAOs auto-execute)
-- Run `sage prompts publish --yes` for community DAOs (creates proposal)
+- Run `sage prompts publish --yes --library-id default --exec` to publish updates (personal DAOs auto-execute)
+- Run `sage prompts publish --yes --library-id default` for community DAOs (creates proposal)
 </quickstart>
 
 <install_sources>
@@ -30,7 +30,19 @@ After quickstart:
 
 ```bash
 # From DAO
-sage install 0xYourDaoAddress
+sage install 0xYourDaoAddress --library-id default
+
+# V5 multi-library: install from a non-default stream
+sage install 0xYourDaoAddress --library-id writing
+
+# Create a new stream (one-time)
+DATA=$(cast calldata "createLibrary(address,string)" 0xYourDaoAddress writing)
+
+# Community/team: create a proposal (custom call)
+sage governance wizard --subdao 0xYourDaoAddress
+
+# Personal/operator: schedule via timelock
+sage timelock schedule --subdao 0xYourDaoAddress --target $LIBRARY_REGISTRY_ADDRESS --data "$DATA"
 
 # From prompt CID (allowlisted only)
 sage install bafkrei...
@@ -80,17 +92,17 @@ sage project latest-prompts --subdao 0xDAO --download
 
 ```bash
 # One-shot publish (creates proposal for community DAOs)
-sage prompts publish --yes
+sage prompts publish --yes --library-id default
 
 # Personal DAO: auto-execute without manual voting
-sage prompts publish --yes --exec
+sage prompts publish --yes --library-id default --exec
 
 # Create proposal only (no submit)
 sage prompts propose --yes
 
 # Alternative: publish to a specific DAO (without setting context)
 sage prompts init --import-from ./prompts/
-sage prompts publish --yes --subdao 0xDAO --pin
+sage prompts publish --yes --subdao 0xDAO --library-id default --pin
 ```
 
 **Personal DAOs (`--governance personal`)**: Use `--exec` flag for instant publishing. The system automatically votes, queues, and executes - no manual governance steps required.
@@ -173,7 +185,7 @@ sage governance vote-with-reason <id> 1 "Improved edge case handling"
 ```
 # Workspace
 sage prompts init                                     # Initialize workspace
-sage prompts new --type <prompt|skill> --name <name>  # Create artifact
+sage prompts new --kind <prompt|skill|snippet> --name <name>  # Create artifact
 sage prompts list                                     # List workspace
 sage prompts status                                   # Local vs synced changes
 sage prompts diff [filter]                            # Show diff
@@ -187,8 +199,8 @@ sage prompts import-skill <name>                      # Import skill template
 sage prompts variant <key> [suffix]                   # Clone as variant
 
 # Publishing
-sage prompts publish --yes                            # One-shot publish
-sage prompts publish --yes --exec                     # Personal DAO: auto-vote/execute
+sage prompts publish --yes --library-id default       # One-shot publish (default stream)
+sage prompts publish --yes --library-id default --exec  # Personal DAO: auto-vote/execute
 sage prompts propose --yes                            # Create proposal only
 sage prompts sync                                     # Sync with on-chain
 

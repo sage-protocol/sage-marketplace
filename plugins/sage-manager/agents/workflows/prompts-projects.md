@@ -21,7 +21,7 @@ sage library quickstart --name "My Library" --from-dir ./prompts/ --dry-run
 After quickstart:
 - Alias auto-saved (e.g., `my-library`)
 - Context auto-set to new DAO
-- Run `sage prompts publish --yes` to publish updates
+- Run `sage prompts publish --yes --library-id default` to publish updates (default stream)
 </quickstart>
 
 <install_sources>
@@ -29,7 +29,19 @@ After quickstart:
 
 ```bash
 # From DAO
-sage install 0xYourDaoAddress
+sage install 0xYourDaoAddress --library-id default
+
+# V5 multi-library: install from a non-default stream
+sage install 0xYourDaoAddress --library-id writing
+
+# Create a new stream (one-time)
+DATA=$(cast calldata "createLibrary(address,string)" 0xYourDaoAddress writing)
+
+# Community/team: create a proposal (custom call)
+sage governance wizard --subdao 0xYourDaoAddress
+
+# Personal/operator: schedule via timelock
+sage timelock schedule --subdao 0xYourDaoAddress --target $LIBRARY_REGISTRY_ADDRESS --data "$DATA"
 
 # From prompt CID (allowlisted only)
 sage install bafkrei...
@@ -79,14 +91,14 @@ sage project latest-prompts --subdao 0xDAO --download
 
 ```bash
 # One-shot publish (creates proposal for community DAOs)
-sage prompts publish --yes
+sage prompts publish --yes --library-id default
 
 # Create proposal only (no submit)
 sage prompts propose --yes
 
 # Alternative: publish to a specific DAO (without setting context)
 sage prompts init --import-from ./prompts/
-sage prompts publish --yes --subdao 0xDAO --pin
+sage prompts publish --yes --subdao 0xDAO --library-id default --pin
 ```
 
 ---
@@ -137,7 +149,7 @@ sage prompts pull code-review
 sage prompts diff
 
 # 5. Publish back to DAO
-sage prompts publish --yes
+sage prompts publish --yes --library-id default
 
 # 6. For community DAOs, vote on the proposal
 sage proposals inbox
@@ -160,7 +172,7 @@ sage governance vote-with-reason <id> 1 "Improved edge case handling"
 ```
 # Workspace
 sage prompts init                                     # Initialize workspace
-sage prompts new --type <prompt|skill> --name <name>  # Create artifact
+sage prompts new --kind <prompt|skill|snippet> --name <name>  # Create artifact
 sage prompts list                                     # List workspace
 sage prompts status                                   # Local vs synced changes
 sage prompts diff [filter]                            # Show diff
@@ -174,7 +186,7 @@ sage prompts import-skill <name>                      # Import skill template
 sage prompts variant <key> [suffix]                   # Clone as variant
 
 # Publishing
-sage prompts publish --yes                            # One-shot publish
+sage prompts publish --yes --library-id default       # One-shot publish (default stream)
 sage prompts propose --yes                            # Create proposal only
 sage prompts sync                                     # Sync with on-chain
 
