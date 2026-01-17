@@ -29,7 +29,7 @@ If scroll is installed and registered as an MCP server, the plugin uses MCP tool
 
 ```bash
 # Register scroll as MCP server
-claude mcp add scroll -- scroll mcp start
+claude mcp add scroll -- scroll serve
 ```
 
 Write operations (voting, staking, publishing) always use the sage CLI as they require wallet signing.

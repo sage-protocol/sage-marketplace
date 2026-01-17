@@ -1,7 +1,7 @@
 ---
 name: sage-list
 description: List installed Sage prompts and skills
-allowed-tools: Bash(which sage:*), Bash(sage list:*)
+allowed-tools: Bash(which:*), Bash(sage:*)
 ---
 
 List all installed prompts and skills from the workspace.

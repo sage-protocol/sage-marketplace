@@ -1,7 +1,7 @@
 ---
 name: sage-setup
 description: Install and configure Sage Protocol CLIs (sage + scroll)
-allowed-tools: Bash(which:*), Bash(npm:*), Bash(cargo:*), Bash(uname:*), Bash(scroll:*), Bash(sage:*), Bash(claude:*), Bash(mkdir:*), Bash(cat:*)
+allowed-tools: Bash(which:*), Bash(npm:*), Bash(cargo:*), Bash(uname:*), Bash(tr:*), Bash(head:*), Bash(grep:*), Bash(date:*), Bash(scroll:*), Bash(sage:*), Bash(claude:*), Bash(mkdir:*), Bash(cat:*)
 ---
 
 Detect and install Sage Protocol CLIs. This sets up:
@@ -74,7 +74,7 @@ if [ "$SAGE_STATUS" = "installed" ] && [ "$SCROLL_STATUS" = "installed" ]; then
       echo "[OK] scroll MCP already registered"
     else
       echo "Registering scroll as MCP server..."
-      claude mcp add scroll -- scroll mcp start && echo "[OK] scroll MCP registered"
+      claude mcp add scroll -- scroll serve && echo "[OK] scroll MCP registered"
     fi
   fi
 
@@ -114,13 +114,9 @@ fi
 if [ "$SCROLL_STATUS" = "missing" ]; then
   echo "Checking scroll CLI (optional - enables MCP hub)..."
 
-  # NOTE: scroll repo is currently private
-  # Only users with repo access can install via cargo
-  # Future: will add binary download when repo goes public
-
   if command -v cargo >/dev/null 2>&1; then
     echo "Attempting to install scroll via cargo..."
-    echo "(This requires access to the private sage-protocol/scroll repo)"
+    echo "(This requires access to the sage-protocol/scroll repo)"
 
     # Try cargo install - will fail if no repo access (that's OK)
     if cargo install --git https://github.com/sage-protocol/scroll.git 2>/dev/null; then
@@ -152,7 +148,7 @@ if [ "$SCROLL_STATUS" = "installed" ]; then
     if claude mcp list 2>/dev/null | grep -q "scroll"; then
       echo "[OK] scroll MCP already registered"
     else
-      claude mcp add scroll -- scroll mcp start && echo "[OK] scroll MCP registered"
+      claude mcp add scroll -- scroll serve && echo "[OK] scroll MCP registered"
     fi
     echo ""
   fi

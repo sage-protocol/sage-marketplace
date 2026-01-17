@@ -1,7 +1,7 @@
 ---
 name: sage-backend
 description: Show CLI backend status and configure preferences (scroll vs sage)
-allowed-tools: Bash(which:*), Bash(scroll:*), Bash(sage:*), Bash(cat:*), Bash(mkdir:*), Bash(echo:*)
+allowed-tools: Bash(which:*), Bash(scroll:*), Bash(sage:*), Bash(claude:*), Bash(cat:*), Bash(mkdir:*), Bash(echo:*), Bash(grep:*), Bash(sed:*), Bash(date:*)
 argument-hint: [show|prefer <scroll|sage|auto>]
 ---
 

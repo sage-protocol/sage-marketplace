@@ -247,9 +247,9 @@ Checks governance context and RPC health.
 
 | Issue | Command | Solution |
 |-------|---------|----------|
-| No wallet | `wallet current` | `wallet connect --type privy` |
-| Wrong network | `doctor` | `config set-rpc` |
-| No context | `context show` | `context use 0x...` |
-| No voting power | `sxxx delegation` | `sxxx delegate-self` |
-| Low ETH | `wallet balance` | Fund wallet |
+| No wallet | `sage wallet current` | `sage wallet connect-privy` |
+| Wrong network | `sage wallet doctor` | `sage config set-rpc` |
+| No context | `sage context show` | `sage context use 0x...` |
+| No voting power | `sage sxxx delegation` | `sage sxxx delegate-self` |
+| Low ETH | `sage wallet balance` | Fund wallet |
 </diagnostics>

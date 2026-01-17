@@ -1,7 +1,7 @@
 ---
 name: sage-install
 description: Install prompts or skills via the Sage CLI (skills auto-activate in Claude Code)
-allowed-tools: Bash(which sage:*), Bash(sage install:*), Bash(mkdir:*), Bash(cp:*), Bash(mv:*), Bash(ls:*)
+allowed-tools: Bash(which:*), Bash(npm:*), Bash(sage:*), Bash(mkdir:*), Bash(ls:*)
 argument-hint: <source>
 ---
 
@@ -11,23 +11,27 @@ Install prompts or skills using the Sage CLI.
 - `bafkrei...` - CID (IPFS content address)
 - `0x...` - DAO address (installs DAO's library)
 - `github:org/repo` - GitHub repository
+- `github:org/repo/path` - GitHub repo subpath
+- `./local/path` - Local directory (skill folder with SKILL.md, or prompt files)
 - `skill-name` - Bundled skill from CLI
 
 **Skill Auto-Discovery:**
-Skills containing SKILL.md are installed to `.claude/skills/` for automatic activation.
-Prompts go to the workspace's `.sage/prompts/` directory.
+Skills containing `SKILL.md` are installed to `.claude/skills/<name>/` and a slash-command is created in `.claude/commands/<name>.md`.
+Prompts are installed to `prompts/` (workspace). If no workspace exists, `sage install` initializes one automatically.
 
 ```bash
 set -euo pipefail
 
 SOURCE="${ARGUMENTS:-}"
 if [ -z "$SOURCE" ]; then
-  echo "Usage: /sage-install <cid | 0xDAO | github:org/repo | skill-name>"
+  echo "Usage: /sage-install <cid | 0xDAO | github:org/repo[/path] | ./path | skill-name>"
   echo ""
   echo "Examples:"
   echo "  /sage-install bafkreiab...          # Install from IPFS CID"
   echo "  /sage-install 0x61835...            # Install from DAO library"
   echo "  /sage-install github:sage/prompts   # Install from GitHub"
+  echo "  /sage-install github:sage/prompts/skills/my-skill  # Install from GitHub subpath"
+  echo "  /sage-install ./skills/my-skill     # Install from local folder"
   echo "  /sage-install my-custom-skill       # Install bundled skill"
   exit 1
 fi
@@ -38,35 +42,14 @@ if ! which sage >/dev/null 2>&1; then
   npm install -g @sage-protocol/cli
 fi
 
-# Install to temp location first to inspect
-TEMP_DIR=$(mktemp -d)
-trap "rm -rf $TEMP_DIR" EXIT
-
 echo "Fetching: $SOURCE"
-sage install "$SOURCE" --to "$TEMP_DIR" --yes --json 2>/dev/null || sage install "$SOURCE" --to "$TEMP_DIR" --yes
+sage install "$SOURCE" --to "." -y --json 2>/dev/null || sage install "$SOURCE" --to "." -y
 
-# Check if it's a skill (has SKILL.md)
-if [ -f "$TEMP_DIR/SKILL.md" ]; then
-  # It's a skill - install to .claude/skills/
-  SKILL_NAME=$(basename "$SOURCE" | sed 's/^0x.*/dao-skill/' | sed 's/^bafk.*/ipfs-skill/' | sed 's/github://' | tr '/' '-')
-  SKILL_DIR=".claude/skills/$SKILL_NAME"
-
-  mkdir -p "$SKILL_DIR"
-  cp -r "$TEMP_DIR"/* "$SKILL_DIR/"
-
-  echo ""
-  echo "Skill installed to: $SKILL_DIR"
-  echo "Restart Claude Code or start new conversation to activate."
-elif [ -d "$TEMP_DIR" ] && [ "$(ls -A $TEMP_DIR)" ]; then
-  # It's prompts - install to .sage/prompts/
-  mkdir -p ".sage/prompts"
-  cp -r "$TEMP_DIR"/* ".sage/prompts/"
-
-  echo ""
-  echo "Prompts installed to: .sage/prompts/"
-  echo "Use 'sage list' to see installed prompts."
-else
-  echo "Error: Nothing was installed"
-  exit 1
-fi
+echo ""
+echo "Installed. Locations:"
+echo "  - Skills:  .claude/skills/ + .claude/commands/"
+echo "  - Prompts: prompts/"
+echo ""
+echo "Next:"
+echo "  - List installed deps: /sage-list"
 ```

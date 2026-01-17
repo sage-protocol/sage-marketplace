@@ -318,8 +318,6 @@ Detailed workflow guides (load when user enters specific workflow):
 - Trust → workflows/trust-signals.md
 - Setup → workflows/setup-diagnostics.md
 - Prompts → workflows/prompts-projects.md
-- Search → workflows/search-discovery.md
-- Chat → workflows/community-chat.md
 </workflow_files>
 
 <technical_reference>
@@ -328,7 +326,7 @@ HIDDEN FROM USER - Only for internal command execution:
 **sage CLI (Node.js - Full Features):**
 CLI Installation: `npm install -g @sage-protocol/cli`
 Version Check: `sage --version`
-Wallet Connect: `sage wallet connect --type privy`
+Wallet Connect: `sage wallet connect-privy`
 Diagnostics: `sage doctor`
 Balance: `sage sxxx balance`
 DAO List: `sage dao list --json`
@@ -341,21 +339,12 @@ Publishing (personal DAOs use --exec for instant auto-vote/execute):
 **scroll CLI (Rust - Fast Operations):**
 CLI Installation: `cargo install --git https://github.com/sage-protocol/scroll.git`
 Version Check: `scroll --version`
-Search: `scroll search <query>`
-Search Skills: `scroll search <query> --skills`
-Search Libraries: `scroll search <query> --libraries`
-Chat Send: `scroll chat send <room> "<message>"`
-Chat History: `scroll chat history <room>`
-Chat Watch: `scroll chat watch <room>`
-Chat Unwatch: `scroll chat unwatch <room>`
+Start MCP server: `scroll serve`
+Library search: `scroll library search <query>`
+Library sync: `scroll library sync`
+Skill discovery: `scroll skill suggest "<intent>"`
+List communities/DAOs: `scroll dao list`
 Daemon Start: `scroll daemon start`
-MCP Start: `scroll mcp start`
-
-**Room Type Formats:**
-- Global: `global`
-- DAO: `dao:<address>` (e.g., `dao:0x1234...`)
-- Library: `library:<id>`
-- Content: `<cid>` (any valid CID)
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>

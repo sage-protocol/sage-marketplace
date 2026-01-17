@@ -32,6 +32,7 @@ SCROLL_AVAILABLE=$(which scroll >/dev/null 2>&1 && echo true || echo false)
 If scroll MCP is registered, these tools are available:
 - `mcp__scroll__list_libraries` - List prompt libraries
 - `mcp__scroll__search_prompts` - Hybrid keyword + semantic search
+- `mcp__scroll__search_skills` - Search installed/available skills
 - `mcp__scroll__list_proposals` - View governance proposals
 - `mcp__scroll__get_voting_power` - Check voting power
 - `mcp__scroll__builder_recommend` - AI prompt recommendations
@@ -42,16 +43,15 @@ If scroll MCP is registered, these tools are available:
 - `mcp__scroll__get_project_context` - Get project state
 - `mcp__scroll__chat_send` - Send message to chat room
 - `mcp__scroll__chat_history` - Get chat room history
+- `mcp__scroll__chat_list_rooms` - List available chat rooms
 - `mcp__scroll__chat_watch` - Watch room for new messages
-- `mcp__scroll__chat_info` - Get room info and stats
-- `mcp__scroll__search` - Full-text search across prompts, skills, libraries
 
 **Status Check (load from ~/.config/sage-manager/cli-status.json):**
 ```json
 {
   "sage": { "available": true, "version": "0.8.4" },
   "scroll": { "available": true, "version": "0.1.0" },
-  "mode": "MCP_FIRST"
+  "detected_at": "2026-01-01T00:00:00Z"
 }
 ```
 </backend_detection>
@@ -65,30 +65,22 @@ Route operations based on backend availability and operation type:
 |---------|---------------|-----------------|-----------------|
 | Libraries | `mcp__scroll__list_libraries` | `sage library push` | scroll (read), sage (write) |
 | Prompts | `mcp__scroll__search_prompts` | `sage prompts publish` | scroll (read), sage (write) |
-| Search | `mcp__scroll__search` | N/A | scroll |
+| Search | `mcp__scroll__search_prompts` / `mcp__scroll__search_skills` | N/A | scroll |
 | Chat | `mcp__scroll__chat_history` | `mcp__scroll__chat_send` | scroll (full) |
 | Governance | `mcp__scroll__list_proposals` | `sage governance vote` | scroll (read), sage (write) |
 | Voting Power | `mcp__scroll__get_voting_power` | N/A | scroll |
 | Bounties | `sage bounty list --json` | `sage bounty create` | sage (full) |
 | NFT/Auction | `sage auction status --json` | `sage auction bid` | sage (full) |
-| Treasury | `sage treasury balance --json` | `sage treasury transfer` | sage (full) |
-| Staking | `sage staking info --json` | `sage staking stake` | sage (full) |
+| Treasury | `sage treasury balance --json` | `sage treasury deposit` / `sage treasury withdraw schedule` | sage (full) |
+| Contributor staking | `sage contributor status --json` | `sage contributor stake` | sage (full) |
+| Voting delegation | `sage sxxx balance --json` | `sage sxxx delegate-self` | sage (full) |
 | DAO Management | `sage dao list --json` | `sage dao create` | sage (full) |
 | Personal Library | `sage library personal list` | `sage library personal push` | sage (full) |
 | Premium Prompts | `sage personal premium list` | `sage personal premium publish` | sage (full) |
 
-**COMMAND EQUIVALENCE (when both CLIs available):**
-
-| Operation | scroll | sage |
-|-----------|--------|------|
-| List libraries | `scroll library list` | `sage library vault list` |
-| Search prompts | `scroll search <query>` | `sage prompts search <query>` |
-| Sync library | `scroll sync` | `sage library sync` |
-| Get context | `scroll context` | `sage doctor` |
-| Chat send | `scroll chat send <room> "<msg>"` | N/A |
-| Chat history | `scroll chat history <room>` | N/A |
-| Watch room | `scroll chat watch <room>` | N/A |
-| Search all | `scroll search <query>` | `sage discover search <query>` |
+**NOTE ON scroll CLI:**
+This plugin prefers MCP tools (`mcp__scroll__*`) for read operations when available. The underlying scroll CLI
+subcommands may vary by version; treat any scroll CLI examples as optional diagnostics only.
 
 **FALLBACK CHAIN:**
 
@@ -103,7 +95,7 @@ User: "show me trending prompts"
 → Mode: MCP_FIRST
 → Try: mcp__scroll__trending_prompts
 → Success: Display results
-→ Fallback (if MCP fails): sage prompts trending --json
+→ Fallback (if MCP fails): sage prompt list --trending --json
 ```
 
 **WRITE OPERATIONS - Always use sage CLI:**
@@ -364,7 +356,7 @@ When user selects "Create Bounty":
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Backend:** Uses `scroll search <query>` or `mcp__scroll__search` for instant results.
+**Backend:** Uses `mcp__scroll__search_prompts` / `mcp__scroll__search_skills` (preferred) and `mcp__scroll__list_libraries` for browsing.
 
 ### WORKFLOW: Chat (💬)
 
@@ -524,33 +516,23 @@ HIDDEN FROM USER - Only for internal command execution:
 
 **sage CLI Commands (for writes and full features):**
 - Version Check: `sage --version`
-- Wallet Connect: `sage wallet connect --type privy`
+- Wallet Connect: `sage wallet connect-privy`
 - Diagnostics: `sage doctor`
 - Balance: `sage sxxx balance`
 - DAO List: `sage dao list --json`
 - Library List: `sage library vault list`
 - Bounty Create: `sage bounty create`
 - Vote: `sage governance vote`
-- Stake: `sage staking stake`
+- Contributor stake: `sage contributor stake <amount>`
+- Voting delegation: `sage sxxx delegate-self`
 
-**scroll CLI Commands (for speed/daemon):**
+**scroll CLI Commands (optional; reads/daemon/MCP):**
 - Version Check: `scroll --version`
-- Start Daemon: `scroll daemon start`
-- Library Sync: `scroll sync`
-- Search: `scroll search <query>`
-- Search Skills: `scroll search <query> --skills`
-- Search Libraries: `scroll search <query> --libraries`
-- Chat Send: `scroll chat send <room> "<message>"`
-- Chat History: `scroll chat history <room>`
-- Chat History (limited): `scroll chat history <room> --limit 50`
-- Chat Watch: `scroll chat watch <room>`
-- Chat Unwatch: `scroll chat unwatch <room>`
-- Chat Watched: `scroll chat watched`
-- Chat Info: `scroll chat info <room>`
-
-**Room Type Formats:**
-- Global: `global`
-- DAO: `dao:<address>` (e.g., `dao:0x1234...`)
+- Start MCP server: `scroll serve`
+- Library search: `scroll library search <query>`
+- Library sync: `scroll library sync`
+- Skill discovery: `scroll skill suggest "<intent>"`
+- List communities/DAOs: `scroll dao list`
 - Library: `library:<id>`
 - Content: `<cid>` (any valid CID)
 
