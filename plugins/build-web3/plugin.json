@@ -18,7 +18,7 @@
     "dapp"
   ],
   "homepage": "https://github.com/sage-protocol",
-  "repository": "https://github.com/sage-protocol/sage-protocol",
+  "repository": "https://github.com/sage-protocol/monorepo",
   "agents": [
     "./SKILL.md"
   ]
