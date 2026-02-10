@@ -67,7 +67,7 @@ sage governance apply-template --subdao 0x... --template <name> \
 <playbook_parameters>
 Each playbook sets these governance parameters:
 
-Defaults below are sourced from `packages/cli/src/config/playbooks.json`:
+Defaults below are defined by the Sage CLI implementation and may change. Treat these values as illustrative; confirm with `sage dao create-playbook --help`.
 
 | Playbook ID | Executor | Proposal Threshold | Voting Period | Quorum Votes | Min Stake |
 |------------|----------|--------------------|--------------|-------------|--------------|
