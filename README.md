@@ -1,6 +1,6 @@
 # Sage Marketplace
 
-A Claude Code plugin marketplace for Sage Protocol skills and prompts.
+Distribution infrastructure for Claude Code plugins and skills.
 
 ## Quick Start
 
@@ -10,10 +10,20 @@ A Claude Code plugin marketplace for Sage Protocol skills and prompts.
 /plugin marketplace add https://github.com/sage-protocol/sage-marketplace
 ```
 
-### Install a Plugin
+### Install a Plugin from the catalog
 
 ```bash
 /plugin install sage-manager
+```
+
+### Sage for Claude
+
+Install directly from the Claude package:
+
+```bash
+/plugin install ./packages/sage-claude
+/reload-plugins
+/sage:setup
 ```
 
 ## Publishing Skills to the Marketplace
@@ -100,7 +110,7 @@ sage install github:org/repo   # From GitHub
 
 | Plugin | Description |
 |--------|-------------|
-| `sage-manager` | Install/manage skills from CID, DAO, or GitHub |
+| `sage-manager` | Legacy command-heavy Sage manager plugin |
 | `sage-node` | Full Sage CLI experience with auto-setup |
 | `sage-protocol-cli` | Governance workflows via CLI |
 | `build-web3` | Web3 dApp development lifecycle |

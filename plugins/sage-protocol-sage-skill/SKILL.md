@@ -323,28 +323,22 @@ Detailed workflow guides (load when user enters specific workflow):
 <technical_reference>
 HIDDEN FROM USER - Only for internal command execution:
 
-**sage CLI (Node.js - Full Features):**
-CLI Installation: `npm install -g @sage-protocol/cli`
+**sage CLI (Rust - Cargo workspace):**
 Version Check: `sage --version`
-Wallet Connect: `sage wallet connect-privy`
+Wallet Connect: `sage wallet connect privy --device-code`
 Diagnostics: `sage doctor`
 Balance: `sage sxxx balance`
 DAO List: `sage dao list --json`
-Library List: `sage library vault list`
+Library List: `sage library list`
+Start MCP server: `sage mcp start`
+Library search: `sage search "<query>" --search-type skills`
+Library sync: `sage library sync`
+Skill discovery: `sage suggest skill "<intent>"`
+Daemon Start: `sage daemon start`
 
 Publishing (personal DAOs use --exec for instant auto-vote/execute):
 - Personal DAO: `sage prompts publish --yes --exec`
 - Community DAO: `sage prompts publish --yes` (creates proposal)
-
-**scroll CLI (Rust - Fast Operations):**
-CLI Installation: `cargo install --git https://github.com/sage-protocol/scroll.git`
-Version Check: `scroll --version`
-Start MCP server: `scroll serve`
-Library search: `scroll library search <query>`
-Library sync: `scroll library sync`
-Skill discovery: `scroll skill suggest "<intent>"`
-List communities/DAOs: `scroll dao list`
-Daemon Start: `scroll daemon start`
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>

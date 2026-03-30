@@ -16,41 +16,39 @@ Run silently on first interaction:
 ```bash
 # Check CLI availability
 SAGE_AVAILABLE=$(which sage >/dev/null 2>&1 && echo true || echo false)
-SCROLL_AVAILABLE=$(which scroll >/dev/null 2>&1 && echo true || echo false)
+# sage CLI is the single Rust binary (no separate "scroll" CLI)
 ```
 
 **Backend Mode Selection:**
 
 | Condition | Mode | Behavior |
 |-----------|------|----------|
-| scroll MCP registered + sage installed | `MCP_FIRST` | Read via MCP tools, write via sage CLI |
-| scroll installed (no MCP) + sage installed | `CLI_HYBRID` | Prefer scroll for speed, sage for on-chain |
-| sage only | `CLI_ONLY` | All operations via sage CLI |
+| sage MCP registered + sage installed | `MCP_FIRST` | Read via MCP tools, write via sage CLI |
+| sage installed (no MCP) | `CLI_ONLY` | All operations via sage CLI |
 | Neither installed | `SETUP_REQUIRED` | Prompt to run `/sage-setup` |
 
 **MCP Tool Detection:**
-If scroll MCP is registered, these tools are available:
-- `mcp__scroll__list_libraries` - List prompt libraries
-- `mcp__scroll__search_prompts` - Hybrid keyword + semantic search
-- `mcp__scroll__search_skills` - Search installed/available skills
-- `mcp__scroll__list_proposals` - View governance proposals
-- `mcp__scroll__get_voting_power` - Check voting power
-- `mcp__scroll__builder_recommend` - AI prompt recommendations
-- `mcp__scroll__builder_synthesize` - Merge prompts
-- `mcp__scroll__trending_prompts` - Discover popular prompts
-- `mcp__scroll__hub_list_servers` - List available MCP servers
-- `mcp__scroll__hub_start_server` - Start external MCP server
-- `mcp__scroll__get_project_context` - Get project state
-- `mcp__scroll__chat_send` - Send message to chat room
-- `mcp__scroll__chat_history` - Get chat room history
-- `mcp__scroll__chat_list_rooms` - List available chat rooms
-- `mcp__scroll__chat_watch` - Watch room for new messages
+If sage MCP is registered, these tools are available:
+- `mcp__sage__list_libraries` - List prompt libraries
+- `mcp__sage__search_prompts` - Hybrid keyword + semantic search
+- `mcp__sage__search_skills` - Search installed/available skills
+- `mcp__sage__list_proposals` - View governance proposals
+- `mcp__sage__get_voting_power` - Check voting power
+- `mcp__sage__builder_recommend` - AI prompt recommendations
+- `mcp__sage__builder_synthesize` - Merge prompts
+- `mcp__sage__trending_prompts` - Discover popular prompts
+- `mcp__sage__hub_list_servers` - List available MCP servers
+- `mcp__sage__hub_start_server` - Start external MCP server
+- `mcp__sage__get_project_context` - Get project state
+- `mcp__sage__chat_send` - Send message to chat room
+- `mcp__sage__chat_history` - Get chat room history
+- `mcp__sage__chat_list_rooms` - List available chat rooms
+- `mcp__sage__chat_watch` - Watch room for new messages
 
 **Status Check (load from ~/.config/sage-manager/cli-status.json):**
 ```json
 {
   "sage": { "available": true, "version": "0.8.4" },
-  "scroll": { "available": true, "version": "0.1.0" },
   "detected_at": "2026-01-01T00:00:00Z"
 }
 ```
@@ -63,12 +61,12 @@ Route operations based on backend availability and operation type:
 
 | Feature | Read Operation | Write Operation | Primary Backend |
 |---------|---------------|-----------------|-----------------|
-| Libraries | `mcp__scroll__list_libraries` | `sage library push` | scroll (read), sage (write) |
-| Prompts | `mcp__scroll__search_prompts` | `sage prompts publish` | scroll (read), sage (write) |
-| Search | `mcp__scroll__search_prompts` / `mcp__scroll__search_skills` | N/A | scroll |
-| Chat | `mcp__scroll__chat_history` | `mcp__scroll__chat_send` | scroll (full) |
-| Governance | `mcp__scroll__list_proposals` | `sage governance vote` | scroll (read), sage (write) |
-| Voting Power | `mcp__scroll__get_voting_power` | N/A | scroll |
+| Libraries | `mcp__sage__sage_search` | `sage library push` | sage (MCP read, CLI write) |
+| Prompts | `mcp__sage__sage_search` | `sage prompts publish` | sage (MCP read, CLI write) |
+| Search | `mcp__sage__sage_search` | N/A | sage MCP |
+| Chat | `sage chat history` | `sage chat send` | sage CLI |
+| Governance | `mcp__sage__sage_search` | `sage governance vote` | sage (MCP read, CLI write) |
+| Voting Power | `sage wallet current` | N/A | sage CLI |
 | Bounties | `sage bounty list --json` | `sage bounty create` | sage (full) |
 | NFT/Auction | `sage auction status --json` | `sage auction bid` | sage (full) |
 | Treasury | `sage treasury balance --json` | `sage treasury deposit` / `sage treasury withdraw schedule` | sage (full) |
@@ -78,22 +76,20 @@ Route operations based on backend availability and operation type:
 | Personal Library | `sage library personal list` | `sage library personal push` | sage (full) |
 | Premium Prompts | `sage personal premium list` | `sage personal premium publish` | sage (full) |
 
-**NOTE ON scroll CLI:**
-This plugin prefers MCP tools (`mcp__scroll__*`) for read operations when available. The underlying scroll CLI
-subcommands may vary by version; treat any scroll CLI examples as optional diagnostics only.
+**NOTE ON MCP tools:**
+This plugin prefers MCP tools (`mcp__sage__*`) for read operations when available.
 
 **FALLBACK CHAIN:**
 
 For each operation, try in order:
 1. **MCP tool** (if `MCP_FIRST` mode) → instant, no shell spawn
-2. **scroll CLI** (if available) → faster Rust binary
-3. **sage CLI** (always available) → full feature set
+2. **sage CLI** (always available) → full feature set
 
 Example routing:
 ```
 User: "show me trending prompts"
 → Mode: MCP_FIRST
-→ Try: mcp__scroll__trending_prompts
+→ Try: mcp__sage__sage_search
 → Success: Display results
 → Fallback (if MCP fails): sage prompt list --trending --json
 ```
@@ -125,8 +121,8 @@ These require wallet signing which only sage CLI supports fully.
 **IMMEDIATELY when this skill loads:**
 
 1. **Detect backend mode** (see `<backend_detection>`):
-   - Check `which sage` and `which scroll`
-   - Check for MCP tools: look for `mcp__scroll__*` availability
+   - Check `which sage`
+   - Check for MCP tools: look for `mcp__sage__*` availability
    - Load status from `~/.config/sage-manager/cli-status.json`
 
 2. **If neither CLI installed** → prompt user:
@@ -173,9 +169,9 @@ These require wallet signing which only sage CLI supports fully.
 
 4. IN BACKGROUND (lazy load), fetch user context:
    **If MCP_FIRST mode:**
-   - Use `mcp__scroll__get_project_context` for wallet, libraries, DAOs
-   - Use `mcp__scroll__get_voting_power` for governance status
-   - Use `mcp__scroll__list_proposals` for pending votes
+   - Use `mcp__sage__get_project_context` for wallet, libraries, DAOs
+   - Use `mcp__sage__get_voting_power` for governance status
+   - Use `mcp__sage__list_proposals` for pending votes
 
    **If CLI_ONLY mode:**
    - Run `sage wallet current` to check wallet status
@@ -356,7 +352,7 @@ When user selects "Create Bounty":
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Backend:** Uses `mcp__scroll__search_prompts` / `mcp__scroll__search_skills` (preferred) and `mcp__scroll__list_libraries` for browsing.
+**Backend:** Uses `mcp__sage__search_prompts` / `mcp__sage__search_skills` (preferred) and `mcp__sage__list_libraries` for browsing.
 
 ### WORKFLOW: Chat (💬)
 
@@ -384,7 +380,7 @@ When user selects "Create Bounty":
 - `library:<id>` - Library-specific chat
 - `<cid>` - Content discussion threads
 
-**Backend:** Uses `scroll chat` commands or MCP chat tools.
+**Backend:** Uses `sage chat` commands or MCP tools.
 
 When user selects "Send message to DAO":
 
@@ -500,19 +496,18 @@ HIDDEN FROM USER - Only for internal command execution:
 
 **CLI Installation:**
 - sage: `npm install -g @sage-protocol/cli`
-- scroll: `cargo install --git https://github.com/sage-protocol/scroll.git` (requires repo access)
 - Full setup: `/sage-setup` command
 
 **MCP Tools (prefer when available):**
-- `mcp__scroll__list_libraries` - List all libraries
-- `mcp__scroll__search_prompts` - Search with query
-- `mcp__scroll__list_proposals` - Governance proposals
-- `mcp__scroll__get_voting_power` - Check voting power
-- `mcp__scroll__get_project_context` - Project state
-- `mcp__scroll__builder_recommend` - AI recommendations
-- `mcp__scroll__trending_prompts` - Popular prompts
-- `mcp__scroll__hub_list_servers` - Available MCP servers
-- `mcp__scroll__hub_start_server` - Start external server
+- `mcp__sage__list_libraries` - List all libraries
+- `mcp__sage__search_prompts` - Search with query
+- `mcp__sage__list_proposals` - Governance proposals
+- `mcp__sage__get_voting_power` - Check voting power
+- `mcp__sage__get_project_context` - Project state
+- `mcp__sage__builder_recommend` - AI recommendations
+- `mcp__sage__trending_prompts` - Popular prompts
+- `mcp__sage__hub_list_servers` - Available MCP servers
+- `mcp__sage__hub_start_server` - Start external server
 
 **sage CLI Commands (for writes and full features):**
 - Version Check: `sage --version`
@@ -526,15 +521,13 @@ HIDDEN FROM USER - Only for internal command execution:
 - Contributor stake: `sage contributor stake <amount>`
 - Voting delegation: `sage sxxx delegate-self`
 
-**scroll CLI Commands (optional; reads/daemon/MCP):**
-- Version Check: `scroll --version`
-- Start MCP server: `scroll serve`
-- Library search: `scroll library search <query>`
-- Library sync: `scroll library sync`
-- Skill discovery: `scroll skill suggest "<intent>"`
-- List communities/DAOs: `scroll dao list`
-- Library: `library:<id>`
-- Content: `<cid>` (any valid CID)
+**sage CLI Commands (MCP/daemon):**
+- Start MCP server: `sage mcp start`
+- Library search: `sage search "<query>" --search-type skills`
+- Library sync: `sage library sync`
+- Skill discovery: `sage suggest skill "<intent>"`
+- List communities/DAOs: `sage dao list`
+- Daemon Start: `sage daemon start`
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>
