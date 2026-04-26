@@ -2,6 +2,8 @@
 
 Distribution infrastructure for Claude Code plugins and skills.
 
+> **Scope note:** this repository is a Claude Code plugin distribution channel. It is not the whole Sage product or the primary first-use story. Sage itself is the cross-agent skill/library layer; library marketplace/value capture happens after a skill or library is useful.
+
 ## Quick Start
 
 ### Add the Marketplace
@@ -28,13 +30,17 @@ Install directly from the Claude package:
 
 ## Publishing Skills to the Marketplace
 
-Skills published to the marketplace are automatically synced and available to all users.
+Skills published to this Claude plugin channel are automatically synced and available to Claude users. For cross-harness Sage distribution, prefer Sage libraries and Worker-backed discovery/marketplace flows.
 
 ### Publish Your Skill
 
 ```bash
-# From your skill directory (must contain plugin.json + SKILL.md)
+# Historical Claude-plugin publishing path (verify against current sage --help)
 sage prompts publish-skill ./my-skill --register --yes
+
+# Current Sage-native path usually starts with a library, then value capture later:
+# sage skill add ./my-skill --library my-library
+# sage library push my-library --cloud --yes
 ```
 
 The `--register` flag:
