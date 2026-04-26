@@ -120,7 +120,9 @@ This shows your SXXX governance token balance.
 | "get tokens" | `sage sxxx faucet` | Requests testnet SXXX from faucet |
 | "list my DAOs" | `sage dao list --json` | Lists DAOs you're a member of |
 | "create a DAO" | `sage library quickstart` | Creates DAO with prompt library |
-| "publish prompts" | `sage library promote <library> --dao <dao> --auto --yes` | Publishes workspace to chain |
+| "publish a skill" | `sage skill publish ./path/to/skill --library <library>` | Uploads single skill to IPFS and adds to library |
+| "push my library" | `sage library push <library> --cloud` | Uploads whole library to IPFS / cloud personal pointer |
+| "promote to DAO" | `sage library promote <library> --dao <dao>` | Submits manifest CID into governed canon (separate step from push) |
 | "vote on proposal" | `sage governance vote <id> 1` | Votes FOR on proposal |
 | "create bounty" | `sage bounty create` | Creates a new bounty |
 | "search prompts" | `sage prompts search <query>` | Searches available prompts |
@@ -220,26 +222,28 @@ sage doctor --subdao 0xAddress
 Prompt workspace management.
 
 ```bash
-# Initialize workspace
-sage prompts init
+# Note: `sage prompts` is a legacy alias for `sage skill`. The
+# workspace-style "prompts init / prompts new / prompts publish"
+# flow has been replaced by library-centric commands.
 
-# Create new prompt
-sage prompts new --name my-prompt
+# Build a library
+sage library create "my-library"
+sage library prompt add my-prompt --file ./prompts/my-prompt.md --library my-library
+sage library list                                 # see what you have
+sage library show my-library                      # inspect contents
 
-# List prompts in workspace
-sage prompts list
+# Publish a single skill (preserves skill-level identity in IPFS)
+sage skill publish ./skills/my-skill --library my-library
 
-# Check what's staged
-sage prompts status
+# Push the whole library to IPFS / cloud personal pointer
+sage library push my-library --cloud
 
-# Publish to chain
-sage library promote <library> --dao <dao> --auto --yes
+# Promote pushed library into governed DAO canon (separate step)
+sage library promote my-library --dao <dao>
 
-# Sync from chain
-sage prompts sync
-
-# Search prompts
-sage prompts search "code review"
+# Search
+sage skill search "code review"
+sage prompts search "code review"   # legacy alias
 ```
 
 ### sage library
@@ -317,10 +321,10 @@ Proposal navigation and voting.
 
 ```bash
 # List active proposals for your DAOs
-sage proposals inbox
+sage governance proposals list --dao <dao>
 
-# Get proposal details
-sage proposals describe <id>
+# Get proposal status
+sage governance proposals status <id>
 
 # Quick vote
 sage proposals vote <id> --support 1 --yes
@@ -499,16 +503,19 @@ sage dao list
 
 ### Publish Prompts to DAO
 ```bash
-sage prompts init
-sage prompts new --name code-reviewer
-# Edit prompts/code-reviewer.md
-sage library promote <library> --dao <dao> --auto --yes
+# Build a library locally
+sage library create "my-prompts"
+sage library prompt add code-reviewer --file ./prompts/code-reviewer.md --library my-prompts
+
+# Push to IPFS, then promote into the DAO's governed canon
+sage library push my-prompts --cloud
+sage library promote my-prompts --dao <dao>
 ```
 
 ### Vote on Governance
 ```bash
 sage governance preflight --action vote
-sage proposals inbox
+sage governance proposals list --dao <dao>
 sage governance vote <id> --support 1 --yes
 ```
 
@@ -649,8 +656,11 @@ sage wallet connect-privy
 sage sxxx faucet
 sage sxxx delegate-self
 
-# Automated publishing
-sage library promote <library> --dao <dao> --dry-run
+# Automated publishing (preview cost without uploading)
+sage library push <library> --cloud --dry-run --yes
+# Then push for real, then promote into governed canon
+sage library push <library> --cloud --yes
+sage library promote <library> --dao <dao>
 
 # Automated voting
 sage governance vote $PROPOSAL_ID --support 1 --yes --json
@@ -667,10 +677,12 @@ SETUP
   sage sxxx delegate-self       Enable voting power
   sage doctor --fix             Fix configuration issues
 
-PROMPTS
-  sage prompts init             Initialize workspace
-  sage prompts new --name X     Create prompt
-  sage library promote <library> --dao <dao> --auto --yes    Publish to chain
+SKILLS / LIBRARY CONTENT
+  sage library create <name>                    Create local library
+  sage library prompt add <p> -f <file> -l <lib>  Add prompt to library
+  sage skill publish <path> --library <lib>     Publish single skill to IPFS
+  sage library push <lib> --cloud               Push whole library to IPFS
+  sage library promote <lib> --dao <dao>        Promote to governed DAO canon
 
 LIBRARIES
   sage library quickstart       Create DAO + library
@@ -678,9 +690,9 @@ LIBRARIES
   sage sync                     Sync updates
 
 GOVERNANCE
-  sage proposals inbox          List active proposals
-  sage governance vote <id> 1   Vote FOR
-  sage governance preflight     Check readiness
+  sage governance proposals list --dao <dao>   List active proposals
+  sage governance vote <id> 1                  Vote FOR
+  sage governance preflight                    Check readiness
 
 ECONOMICS
   sage bounty create            Create bounty

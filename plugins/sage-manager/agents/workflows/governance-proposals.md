@@ -28,7 +28,7 @@ sage governance self-delegate                         # Delegate to self
 sage governance delegation [address]                  # Check delegation status
 
 # Alternative vote commands via proposals namespace
-sage proposals inbox --subdao 0x...
+sage governance proposals list --dao 0x...
 sage proposals preview <id> --subdao 0x...
 sage proposals vote <id> <for|against|abstain> --subdao 0x... -y
 sage proposals execute <id> --subdao 0x... -y
@@ -42,28 +42,17 @@ sage proposals execute <id> --subdao 0x... -y
 <authority>
 **Agent Responsibilities (MCP vs CLI)**
 
-**MCP Tools (read-only, instant - prefer when available)**
-If scroll MCP is registered, use these for all read operations:
-- `mcp__scroll__list_proposals` → List governance proposals
-- `mcp__scroll__get_voting_power` → Check voting power for address
-- `mcp__scroll__list_subdaos` → List all DAOs
-- `mcp__scroll__get_project_context` → Get wallet, DAO context
+**MCP Server (read-only)**
+- Navigate DAO structure and governance profiles
+- Query proposal states, voting power, and thresholds
+- Generate CLI commands for the user to execute
+- Iterate on prompts locally before publishing
 
-**CLI Commands (for writes and diagnostics)**
+**CLI (execution surface)**
 - Submit transactions: propose, vote, queue, execute
 - Run readiness checks (`preflight`, `threshold-status`)
 - Delegate voting power and manage vote/propose prerequisites
 - Execute fix-flow commands when readiness checks fail
-
-**Routing Logic:**
-```
-Read operation (proposals, voting power, DAO list):
-  → If MCP_FIRST mode: Use mcp__scroll__* tools
-  → Else: Use sage governance list --json
-
-Write operation (vote, propose, queue, execute):
-  → Always use sage CLI (requires wallet signing)
-```
 
 The MCP server provides discovery and command generation; the CLI handles all state-changing operations.
 </authority>
@@ -87,6 +76,10 @@ This runs the same diagnostics as the CLI’s `GovernanceManager.preflightPropos
 - Prints proposal config: `proposalThreshold`, `votingDelay`, `votingPeriod`, `proposalCooldown`
 - Checks proposal cooldown (blocks proposals until cooldown expires)
 - Computes voting power at the previous clock tick and compares to `proposalThreshold` (delegation required; NFT multipliers apply when enabled)
+
+For voting, preflight additionally checks (when supported by the Governor):
+- Delegation status (no delegation → 0 votes)
+- `minVotesToVote` (default: **1 SXXX** effective votes) to prevent 0-weight vote spam and reduce per-voter farming via wallet-splitting
 
 For voting, preflight additionally checks (when supported by the Governor):
 - Delegation status (no delegation → 0 votes)
@@ -201,6 +194,19 @@ sage governance preflight --subdao 0x...   # Check readiness
 
 Only proceed to proposing once preflight is clean.
 </governance_modes>
+
+<operator_mode_note>
+**OPERATOR Mode DAOs (No Voting Required)**
+
+For personal DAOs or council-closed DAOs with `governanceKind: OPERATOR`:
+- No token voting occurs (threshold=0, quorum=0)
+- The DAO owner/council executes changes directly via Timelock
+- Regular users cannot participate in governance - the owner controls everything
+
+**If you're a regular user:** You cannot vote or propose in OPERATOR mode DAOs. The owner manages everything.
+
+**If you're the DAO owner:** Use `sage timelock --help` for admin operations. These are privileged commands not covered in this workflow.
+</operator_mode_note>
 
 <process>
 **Step 1: Ensure context**
@@ -336,13 +342,13 @@ Patterns for other levers (all using **regular CLI proposal commands**):
     These operate on the BoostManager contracts but are still tied to a specific `proposalId` on the Governor.
   - Policy‑level changes (e.g., Merkle policy adapters) should be done with proposals that call the relevant policy contracts, using `sage calldata ...` + `sage governance propose-custom`.
 
-- **Prompt / library upgrades**  
-  - Use the normal publishing flows; they already wrap governance:
+- **Prompt / library upgrades**
+  - Two-step flow: push the manifest to IPFS, then promote into the DAO's governed canon:
     ```bash
-    sage library promote <library> --dao <dao> --auto --yes          # Build manifest, update LibraryRegistry via proposal
-    sage prompts propose --yes          # Only build proposal, do not auto‑execute
+    sage library push <library> --cloud           # Upload manifest to IPFS
+    sage library promote <library> --dao <dao>    # LibraryRegistry update via Governor/Timelock
     ```
-    Under the hood these call `LibraryRegistry.updateLibrary(dao, manifestCID, version)` through the Governor/Timelock.
+    Under the hood `promote` calls `LibraryRegistry.updateLibrary(dao, manifestCID, version)` through the Governor/Timelock — for community DAOs this creates a proposal; for personal/operator DAOs it auto-executes after the timelock delay.
 
 Governance mode guidance:
 
@@ -461,8 +467,11 @@ sage sxxx delegate-self
 
 # PHASE 3: Create Proposal
 # ========================
-# Option A: Publish prompts (auto-creates proposal)
-sage library promote <library> --dao <dao> --auto --yes
+# Option A: Promote a library (auto-creates a proposal for community DAOs)
+#  Step 1 — push the manifest:
+sage library push <library> --cloud
+#  Step 2 — promote the new manifest CID into governance:
+sage library promote <library> --dao 0xSUBDAO
 # Expected: Proposal created with ID: 553902...
 
 # Option B: Custom proposal

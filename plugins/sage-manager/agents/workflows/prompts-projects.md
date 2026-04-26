@@ -23,7 +23,9 @@ sage library quickstart --name "My Library" --from-dir ./prompts/ --dry-run
 After quickstart:
 - Alias auto-saved (e.g., `my-library`)
 - Context auto-set to new DAO
-- Run `sage library promote <library> --dao <dao> --auto --yes` to publish updates (default stream)
+- To add new content: `sage library prompt add <name> --file <path> --library <library>` or `sage skill publish <path> --library <library>`
+- To push the updated manifest to IPFS: `sage library push <library> --cloud`
+- To submit the new manifest CID into governed canon: `sage library promote <library> --dao <dao>` (personal DAOs auto-execute via timelock; community DAOs create a proposal for token-holder vote)
 </quickstart>
 
 <install_sources>
@@ -91,16 +93,18 @@ sage project latest-prompts --subdao 0xDAO --download
 
 ### PUSH: Publish Local Changes to DAO
 
+The publish flow is two distinct steps:
+
 ```bash
-# One-shot publish (creates proposal for community DAOs)
-sage library promote <library> --dao <dao> --auto --yes
+# 1. Push the library manifest to IPFS (or update the cloud personal pointer)
+sage library push <library> --cloud
 
-# Create proposal only (no submit)
-sage prompts propose --yes
+# 2. Promote the new manifest CID into governed canon
+#    Personal DAOs auto-execute via timelock; community DAOs create a token-holder proposal.
+sage library promote <library> --dao <dao>
 
-# Alternative: publish to a specific DAO (without setting context)
-sage prompts init --import-from ./prompts/
-sage library promote <library> --dao 0xDAO --auto --yes
+# Preview the cost of step 1 without uploading
+sage library push <library> --cloud --dry-run
 ```
 
 ---
@@ -150,13 +154,21 @@ sage prompts pull code-review
 # 4. Check what changed
 sage prompts diff
 
-# 5. Publish back to DAO
-sage library promote <library> --dao <dao> --auto --yes
+# 5. Publish back to DAO (two steps: push to IPFS, then promote into canon).
+#    `<library>` is the alias saved by `sage library quickstart` (e.g. `my-skills-library`).
+#    `<dao>` is the SubDAO address shown by `sage dao list --json`.
+sage library push <library> --cloud
+sage library promote <library> --dao <dao>
 
-# 6. For community DAOs, vote on the proposal
-sage proposals inbox
+# For community DAOs the promote step creates a proposal — list and vote on it next:
+sage governance proposals list --dao <dao>
 sage governance vote-with-reason <id> 1 "Improved edge case handling"
 ```
+
+**Governance Types** (chosen via `sage library quickstart --governance <kind>`; affects how `sage library promote` behaves):
+- `personal`: pass `--auto` to `sage library promote` for auto-schedule + auto-execute via timelock (Council/Personal mode only — see `sage library promote --help`).
+- `team`: Council multisig approval required. Promote without `--auto` and have the council members vote/execute.
+- `community`: Token holder voting required. Promote without `--auto`; this creates a proposal that token holders vote on, then anyone can execute.
 
 ---
 
@@ -187,10 +199,11 @@ sage prompts pull <key>                               # Pull from registry
 sage prompts import-skill <name>                      # Import skill template
 sage prompts variant <key> [suffix]                   # Clone as variant
 
-# Publishing
-sage library promote <library> --dao <dao> --auto --yes       # One-shot publish (default stream)
-sage prompts propose --yes                            # Create proposal only
-sage prompts sync                                     # Sync with on-chain
+# Publishing pipeline (push -> promote, two distinct steps)
+sage library push <library> --cloud                   # Upload manifest to IPFS / cloud pointer
+sage library promote <library> --dao <dao>            # Submit manifest CID into governed canon
+sage skill publish <path> --library <library>         # Publish a single skill (preserves skill identity)
+sage prompts sync                                     # Sync local workspace with on-chain
 
 # Project manifests
 sage prompts init --import-from <dir>                 # Import content into workspace

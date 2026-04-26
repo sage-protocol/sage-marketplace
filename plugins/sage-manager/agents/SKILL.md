@@ -62,7 +62,7 @@ Route operations based on backend availability and operation type:
 | Feature | Read Operation | Write Operation | Primary Backend |
 |---------|---------------|-----------------|-----------------|
 | Libraries | `mcp__sage__sage_search` | `sage library push` | sage (MCP read, CLI write) |
-| Prompts | `mcp__sage__sage_search` | `sage library push <library> --cloud` | sage (MCP read, CLI write) |
+| Prompts / Skills | `mcp__sage__sage_search` | `sage skill publish <path> --library <lib>` (single skill) or `sage library push <library> --cloud` (whole library) | sage (MCP read, CLI write) |
 | Search | `mcp__sage__sage_search` | N/A | sage MCP |
 | Chat | `sage chat history` | `sage chat send` | sage CLI |
 | Governance | `mcp__sage__sage_search` | `sage governance vote` | sage (MCP read, CLI write) |

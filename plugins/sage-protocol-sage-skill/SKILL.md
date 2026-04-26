@@ -14,8 +14,8 @@ Install this skill directly in Claude Code:
 Or via Sage CLI:
 
 ```bash
-sage library push <library> --cloud-skill ./  # Get install URL
-sage skill install-url <cid>   # Generate install command for any CID
+sage skill publish ./           # Upload this skill to IPFS, returns CID + install URL
+sage skill install-url <cid>    # Generate install command for any CID
 ```
 
 ---
@@ -336,9 +336,12 @@ Library sync: `sage library sync`
 Skill discovery: `sage suggest skill "<intent>"`
 Daemon Start: `sage daemon start`
 
-Publishing (personal DAOs use --exec for instant auto-vote/execute):
-- Personal DAO: `sage library promote <library> --dao <dao> --auto --yes`
-- Community DAO: `sage library promote <library> --dao <dao> --auto --yes` (creates proposal)
+Publishing pipeline:
+1. Build local library: `sage library create <name>` then `sage library prompt add` or `sage skill publish <path> --library <name>`
+2. Push to IPFS: `sage library push <name> --cloud`
+3. Promote into DAO governance (separate step):
+   - Personal DAO: `sage library promote <name> --dao <dao>` (auto-executes via timelock)
+   - Community DAO: `sage library promote <name> --dao <dao>` (creates proposal for token-holder vote)
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>

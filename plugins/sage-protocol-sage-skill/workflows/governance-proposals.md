@@ -28,7 +28,7 @@ sage governance self-delegate                         # Delegate to self
 sage governance delegation [address]                  # Check delegation status
 
 # Alternative vote commands via proposals namespace
-sage proposals inbox --subdao 0x...
+sage governance proposals list --dao 0x...
 sage proposals preview <id> --subdao 0x...
 sage proposals vote <id> <for|against|abstain> --subdao 0x... -y
 sage proposals execute <id> --subdao 0x... -y
@@ -342,13 +342,13 @@ Patterns for other levers (all using **regular CLI proposal commands**):
     These operate on the BoostManager contracts but are still tied to a specific `proposalId` on the Governor.
   - Policy‑level changes (e.g., Merkle policy adapters) should be done with proposals that call the relevant policy contracts, using `sage calldata ...` + `sage governance propose-custom`.
 
-- **Prompt / library upgrades**  
-  - Use the normal publishing flows; they already wrap governance:
+- **Prompt / library upgrades**
+  - Two-step flow: push the manifest to IPFS, then promote into the DAO's governed canon:
     ```bash
-    sage library promote <library> --dao <dao> --auto --yes          # Build manifest, update LibraryRegistry via proposal
-    sage prompts propose --yes          # Only build proposal, do not auto‑execute
+    sage library push <library> --cloud           # Upload manifest to IPFS
+    sage library promote <library> --dao <dao>    # LibraryRegistry update via Governor/Timelock
     ```
-    Under the hood these call `LibraryRegistry.updateLibrary(dao, manifestCID, version)` through the Governor/Timelock.
+    Under the hood `promote` calls `LibraryRegistry.updateLibrary(dao, manifestCID, version)` through the Governor/Timelock — for community DAOs this creates a proposal; for personal/operator DAOs it auto-executes after the timelock delay.
 
 Governance mode guidance:
 
@@ -467,8 +467,11 @@ sage sxxx delegate-self
 
 # PHASE 3: Create Proposal
 # ========================
-# Option A: Publish prompts (auto-creates proposal)
-sage library promote <library> --dao <dao> --auto --yes
+# Option A: Promote a library (auto-creates a proposal for community DAOs)
+#  Step 1 — push the manifest:
+sage library push <library> --cloud
+#  Step 2 — promote the new manifest CID into governance:
+sage library promote <library> --dao 0xSUBDAO
 # Expected: Proposal created with ID: 553902...
 
 # Option B: Custom proposal
