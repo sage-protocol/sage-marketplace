@@ -120,7 +120,7 @@ This shows your SXXX governance token balance.
 | "get tokens" | `sage sxxx faucet` | Requests testnet SXXX from faucet |
 | "list my DAOs" | `sage dao list --json` | Lists DAOs you're a member of |
 | "create a DAO" | `sage library quickstart` | Creates DAO with prompt library |
-| "publish prompts" | `sage prompts publish --yes` | Publishes workspace to chain |
+| "publish prompts" | `sage library promote <library> --dao <dao> --auto --yes` | Publishes workspace to chain |
 | "vote on proposal" | `sage governance vote <id> 1` | Votes FOR on proposal |
 | "create bounty" | `sage bounty create` | Creates a new bounty |
 | "search prompts" | `sage prompts search <query>` | Searches available prompts |
@@ -233,7 +233,7 @@ sage prompts list
 sage prompts status
 
 # Publish to chain
-sage prompts publish --yes
+sage library promote <library> --dao <dao> --auto --yes
 
 # Sync from chain
 sage prompts sync
@@ -256,10 +256,10 @@ sage library fork 0xSourceDAO -n "My Fork"
 sage library info --subdao 0xAddress
 
 # Personal libraries (wallet-owned, no DAO)
-sage library personal create -n "My Personal Lib"
-sage library personal list
-sage library personal push my-lib-id --from-dir ./prompts
-sage library personal delete my-lib-id --force
+sage library create "My Personal Lib" --visibility public
+sage library list
+sage library push my-lib-id --cloud
+sage library remove my-lib-id
 ```
 
 ### sage install
@@ -502,7 +502,7 @@ sage dao list
 sage prompts init
 sage prompts new --name code-reviewer
 # Edit prompts/code-reviewer.md
-sage prompts publish --yes
+sage library promote <library> --dao <dao> --auto --yes
 ```
 
 ### Vote on Governance
@@ -650,7 +650,7 @@ sage sxxx faucet
 sage sxxx delegate-self
 
 # Automated publishing
-sage prompts publish --yes --json
+sage library promote <library> --dao <dao> --dry-run
 
 # Automated voting
 sage governance vote $PROPOSAL_ID --support 1 --yes --json
@@ -670,7 +670,7 @@ SETUP
 PROMPTS
   sage prompts init             Initialize workspace
   sage prompts new --name X     Create prompt
-  sage prompts publish --yes    Publish to chain
+  sage library promote <library> --dao <dao> --auto --yes    Publish to chain
 
 LIBRARIES
   sage library quickstart       Create DAO + library

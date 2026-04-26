@@ -1,4 +1,6 @@
 <objective>
+Current CLI note: older personal/vault library namespaces have been removed. Use `sage library create`, `sage library push --cloud`, `sage library visibility`, and `sage library shared` for current local/cloud/shared library flows.
+
 Manage personal prompt libraries: vault (private/encrypted), personal (public wallet-owned), and personal marketplace (licensed content).
 </objective>
 
@@ -14,13 +16,13 @@ If scroll MCP is registered, use these for listing/searching:
 
 **CLI Commands (for writes)**
 All publish, push, and delete operations use sage CLI:
-- `sage library personal push` / `sage library vault push`
+- `sage library prompt add`, `sage library push --cloud`, `sage library visibility`
 - `sage personal publish` / `sage personal premium publish`
-- `sage library personal delete` / `sage library vault delete`
+- `sage library remove` (local) / `sage library shared delete` (shared libraries)
 
 **Routing:**
 ```
-List/Search prompts → MCP_FIRST: mcp__scroll__*, else: sage library personal list
+List/Search prompts → MCP_FIRST: mcp__scroll__*, else: sage library list
 Push/Publish prompts → Always: sage CLI (requires wallet signing)
 ```
 </mcp_tools>
@@ -33,7 +35,7 @@ Push/Publish prompts → Always: sage CLI (requires wallet signing)
 | **Visibility** | Public, discoverable | Private, encrypted |
 | **Access** | Anyone can view manifest | Only owner can access |
 | **Use Case** | Share prompts publicly | Store private prompts |
-| **CLI Namespace** | `sage library personal` | `sage library vault` |
+| **CLI Namespace** | `sage library create` + `sage library push --cloud` | `sage library create --visibility private` / `sage library shared` |
 | **Auth** | SIWE signature | SIWE signature |
 | **On-chain** | Yes (LibraryRegistry) | Yes (LibraryRegistry) |
 
@@ -54,21 +56,21 @@ Push/Publish prompts → Always: sage CLI (requires wallet signing)
 <command_reference>
 ```
 # Personal libraries (wallet-owned prompt collections, SIWE auth)
-sage library personal create --name "My Prompts"      # Create personal library
-sage library personal list                            # List your libraries
-sage library personal info <id>                       # Get library details (includes manifestCid)
-sage library personal push <id> --dir ./prompts       # Upload prompts to library
-sage library personal delete <id>                     # Delete library
+sage library create "My Prompts" --visibility public      # Create personal library
+sage library list                            # List your libraries
+sage library show <library>                       # Get library details (includes manifestCid)
+sage library push <library> --cloud       # Upload prompts to library
+sage library remove <library>                     # Delete library
 
 # Vault libraries (private/encrypted, same API as personal)
-sage library vault create --name "My Vault"           # Create vault library
-sage library vault list                               # List your vaults
-sage library vault info <id>                          # Get vault details
-sage library vault push <id> --dir ./prompts          # Upload to vault
-sage library vault delete <id>                        # Delete vault
+sage library create "My Vault" --visibility private           # Create vault library
+sage library list                               # List your vaults
+sage library show <library>                          # Get vault details
+sage library push <library> --cloud          # Upload to vault
+sage library remove <library>                        # Delete vault
 
 # View prompts inside a library (requires manifest download)
-sage library personal info <id>                       # Get manifestCid
+sage library show <library>                       # Get manifestCid
 sage ipfs download <manifestCid>                      # Download manifest JSON to see prompt list
 
 # Personal marketplace (licensed prompts)
@@ -97,7 +99,7 @@ sage personal premium unlist <key> -y                 # Remove listing
 
 **Key distinction**:
 - **Personal DAO** (`--governance personal`) = ON-chain, fully discoverable via subgraph, direct Timelock updates (no voting)
-- **Personal Library** (`sage library personal`) = OFF-chain via IPFS Worker API, simpler but less discoverable
+- **Personal Library** (`sage library create` + `sage library push --cloud`) = OFF-chain via IPFS Worker API, simpler but less discoverable
 
 **Recommendation**: For solo creators who want full discoverability, use **Personal Governance DAO** (Path C below).
 </personal_vs_dao>
@@ -109,16 +111,16 @@ Use personal libraries when you want to share prompts publicly.
 
 ```bash
 # 1. Create a personal library
-sage library personal create --name "My Public Prompts"
+sage library create "My Public Prompts" --visibility public
 
 # 2. Push prompts from local directory
-sage library personal push my-public-prompts --dir ./prompts
+sage library push my-public-prompts --cloud
 
 # 3. List your libraries
-sage library personal list
+sage library list
 
 # 4. Get library info (includes manifestCid for others to install)
-sage library personal info my-public-prompts
+sage library show my-public-prompts
 ```
 
 Others can install your library:
@@ -134,16 +136,16 @@ Use vault libraries for private prompt collections only you can access.
 
 ```bash
 # 1. Create a vault library
-sage library vault create --name "My Private Vault"
+sage library create "My Private Vault" --visibility private
 
 # 2. Push prompts (encrypted storage)
-sage library vault push my-private-vault --dir ./prompts
+sage library push my-private-vault --cloud
 
 # 3. List your vaults
-sage library vault list
+sage library list
 
 # 4. Get vault info
-sage library vault info my-private-vault
+sage library show my-private-vault
 ```
 
 Vault content is encrypted and only accessible with your wallet signature.
@@ -167,10 +169,10 @@ sage library quickstart \
 # - Alias saved (e.g., my-skills-library)
 
 # 2. Publish updates (auto-detects operator mode, schedules directly via Timelock)
-sage prompts publish --subdao my-skills-library --files ./prompts/new-skill.md --yes
+sage library prompt add new-skill --file ./prompts/new-skill.md --library my-skills-library && sage library push my-skills-library --cloud
 
 # 3. With --exec flag, also auto-executes after timelock delay (usually 0 for personal)
-sage prompts publish --subdao my-skills-library --files ./prompts/new-skill.md --yes --exec
+sage library promote my-skills-library --dao <dao-address> --auto --yes
 
 # 4. Sync to scroll for local access
 scroll library sync

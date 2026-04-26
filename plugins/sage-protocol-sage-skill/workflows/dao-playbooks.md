@@ -224,7 +224,7 @@ sage governance preflight --subdao 0x...
 
 # 3. Now you can publish (creates governance proposal)
 sage prompts init
-sage prompts publish --yes
+sage library promote <library> --dao <dao> --auto --yes
 ```
 
 **If preflight fails with "insufficient proposer votes":**
@@ -237,7 +237,7 @@ sage sxxx faucet
 
 # Then delegate and retry
 sage sxxx delegate-self
-sage prompts publish --yes
+sage library promote <library> --dao <dao> --auto --yes
 ```
 
 This step is NOT needed for personal/operator DAOs (OPERATOR mode) - those use direct execution.
@@ -398,7 +398,7 @@ sage dao fork 0xSourceDAO --name "My Fork"
 sage dao use 0xNewDAO
 
 # 4. Evolve the library independently
-sage prompts publish -y
+sage library promote <library> --dao <dao> --auto --yes
 ```
 </dao_forking>
 
@@ -471,7 +471,7 @@ Benefits:
   - For bounty/premium economics:
     - `sage dao-config propose-initial ...` or `sage governance propose-custom ...`
   - For prompt/library changes:
-    - `sage prompts publish --yes` or `sage prompts propose --yes`
+    - `sage library promote <library> --dao <dao> --auto --yes` or `sage prompts propose --yes`
 - Never rely on direct `set-*` / operator-style helpers; they bypass token holder approval.
 
 **Profile detection:**

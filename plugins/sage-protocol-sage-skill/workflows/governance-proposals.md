@@ -289,7 +289,7 @@ The following knobs are all intended to be driven by proposals or timelock‑sch
 - **Library fork fees** – `LibraryRegistry.setLibraryForkFee(dao, fee)`
 - **Bounty stake / premium splits** – `GovernanceConfig.setCreatorStakeBps` and `setPremiumRevSplit`
 - **Boost / rebate programs** – `sage boost ...` flows tied to specific proposals
-- **Prompt / library upgrades** – `LibraryRegistry.updateLibrary` via `sage prompts publish` / `sage prompts propose`
+- **Prompt / library upgrades** – `LibraryRegistry.updateLibrary` via `sage library push <library> --cloud` / `sage prompts propose`
 
 Example: set a library fork fee for a DAO via a normal CLI proposal:
 
@@ -345,7 +345,7 @@ Patterns for other levers (all using **regular CLI proposal commands**):
 - **Prompt / library upgrades**  
   - Use the normal publishing flows; they already wrap governance:
     ```bash
-    sage prompts publish --yes          # Build manifest, update LibraryRegistry via proposal
+    sage library promote <library> --dao <dao> --auto --yes          # Build manifest, update LibraryRegistry via proposal
     sage prompts propose --yes          # Only build proposal, do not auto‑execute
     ```
     Under the hood these call `LibraryRegistry.updateLibrary(dao, manifestCID, version)` through the Governor/Timelock.
@@ -468,7 +468,7 @@ sage sxxx delegate-self
 # PHASE 3: Create Proposal
 # ========================
 # Option A: Publish prompts (auto-creates proposal)
-sage prompts publish --yes
+sage library promote <library> --dao <dao> --auto --yes
 # Expected: Proposal created with ID: 553902...
 
 # Option B: Custom proposal

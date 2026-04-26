@@ -62,7 +62,7 @@ Route operations based on backend availability and operation type:
 | Feature | Read Operation | Write Operation | Primary Backend |
 |---------|---------------|-----------------|-----------------|
 | Libraries | `mcp__sage__sage_search` | `sage library push` | sage (MCP read, CLI write) |
-| Prompts | `mcp__sage__sage_search` | `sage prompts publish` | sage (MCP read, CLI write) |
+| Prompts | `mcp__sage__sage_search` | `sage library push <library> --cloud` | sage (MCP read, CLI write) |
 | Search | `mcp__sage__sage_search` | N/A | sage MCP |
 | Chat | `sage chat history` | `sage chat send` | sage CLI |
 | Governance | `mcp__sage__sage_search` | `sage governance vote` | sage (MCP read, CLI write) |
@@ -73,7 +73,7 @@ Route operations based on backend availability and operation type:
 | Contributor staking | `sage contributor status --json` | `sage contributor stake` | sage (full) |
 | Voting delegation | `sage sxxx balance --json` | `sage sxxx delegate-self` | sage (full) |
 | DAO Management | `sage dao list --json` | `sage dao create` | sage (full) |
-| Personal Library | `sage library personal list` | `sage library personal push` | sage (full) |
+| Personal Library | `sage library list` | `sage library push` | sage (full) |
 | Premium Prompts | `sage personal premium list` | `sage personal premium publish` | sage (full) |
 
 **NOTE ON MCP tools:**
@@ -515,7 +515,7 @@ HIDDEN FROM USER - Only for internal command execution:
 - Diagnostics: `sage doctor`
 - Balance: `sage sxxx balance`
 - DAO List: `sage dao list --json`
-- Library List: `sage library vault list`
+- Library List: `sage library list`
 - Bounty Create: `sage bounty create`
 - Vote: `sage governance vote`
 - Contributor stake: `sage contributor stake <amount>`

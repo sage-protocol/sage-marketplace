@@ -1,4 +1,6 @@
 <objective>
+Current CLI note: older personal/vault library namespaces have been removed. Use `sage library create`, `sage library push --cloud`, `sage library visibility`, and `sage library shared` for current local/cloud/shared library flows.
+
 Manage personal prompt libraries: vault (private/encrypted), personal (public wallet-owned), and personal marketplace (licensed content).
 </objective>
 
@@ -10,7 +12,7 @@ Manage personal prompt libraries: vault (private/encrypted), personal (public wa
 | **Visibility** | Public, discoverable | Private, encrypted |
 | **Access** | Anyone can view manifest | Only owner can access |
 | **Use Case** | Share prompts publicly | Store private prompts |
-| **CLI Namespace** | `sage library personal` | `sage library vault` |
+| **CLI Namespace** | `sage library create` + `sage library push --cloud` | `sage library create --visibility private` / `sage library shared` |
 | **Auth** | SIWE signature | SIWE signature |
 | **On-chain** | Yes (LibraryRegistry) | Yes (LibraryRegistry) |
 
@@ -31,21 +33,21 @@ Manage personal prompt libraries: vault (private/encrypted), personal (public wa
 <command_reference>
 ```
 # Personal libraries (wallet-owned prompt collections, SIWE auth)
-sage library personal create --name "My Prompts"      # Create personal library
-sage library personal list                            # List your libraries
-sage library personal info <id>                       # Get library details (includes manifestCid)
-sage library personal push <id> --dir ./prompts       # Upload prompts to library
-sage library personal delete <id>                     # Delete library
+sage library create "My Prompts" --visibility public      # Create personal library
+sage library list                            # List your libraries
+sage library show <library>                       # Get library details (includes manifestCid)
+sage library push <library> --cloud       # Upload prompts to library
+sage library remove <library>                     # Delete library
 
 # Vault libraries (private/encrypted, same API as personal)
-sage library vault create --name "My Vault"           # Create vault library
-sage library vault list                               # List your vaults
-sage library vault info <id>                          # Get vault details
-sage library vault push <id> --dir ./prompts          # Upload to vault
-sage library vault delete <id>                        # Delete vault
+sage library create "My Vault" --visibility private           # Create vault library
+sage library list                               # List your vaults
+sage library show <library>                          # Get vault details
+sage library push <library> --cloud          # Upload to vault
+sage library remove <library>                        # Delete vault
 
 # View prompts inside a library (requires manifest download)
-sage library personal info <id>                       # Get manifestCid
+sage library show <library>                       # Get manifestCid
 sage ipfs download <manifestCid>                      # Download manifest JSON to see prompt list
 
 # Personal marketplace (licensed prompts)
@@ -78,16 +80,16 @@ Use personal libraries when you want to share prompts publicly.
 
 ```bash
 # 1. Create a personal library
-sage library personal create --name "My Public Prompts"
+sage library create "My Public Prompts" --visibility public
 
 # 2. Push prompts from local directory
-sage library personal push my-public-prompts --dir ./prompts
+sage library push my-public-prompts --cloud
 
 # 3. List your libraries
-sage library personal list
+sage library list
 
 # 4. Get library info (includes manifestCid for others to install)
-sage library personal info my-public-prompts
+sage library show my-public-prompts
 ```
 
 Others can install your library:
@@ -103,16 +105,16 @@ Use vault libraries for private prompt collections only you can access.
 
 ```bash
 # 1. Create a vault library
-sage library vault create --name "My Private Vault"
+sage library create "My Private Vault" --visibility private
 
 # 2. Push prompts (encrypted storage)
-sage library vault push my-private-vault --dir ./prompts
+sage library push my-private-vault --cloud
 
 # 3. List your vaults
-sage library vault list
+sage library list
 
 # 4. Get vault info
-sage library vault info my-private-vault
+sage library show my-private-vault
 ```
 
 Vault content is encrypted and only accessible with your wallet signature.

@@ -107,7 +107,7 @@ sage dao list
 # Don't ask "what prompts do you have?" - check:
 ls prompts/
 sage prompts list
-sage library vault list
+sage library list
 ```
 
 ### Automation Flags

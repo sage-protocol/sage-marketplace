@@ -1,4 +1,6 @@
 <objective>
+Current CLI note: `sage prompts` is now a legacy alias for `sage skill`; do not use old workspace/governance prompt-publish flows. Use `sage library prompt add`, `sage library push`, and `sage library promote`/`sage governance proposals` for library updates.
+
 Manage the full prompt lifecycle: ideation, creation, iteration, versioning, and publishing to on-chain registries. Includes install flows from DAO/CID/GitHub/bundled skills.
 </objective>
 
@@ -21,7 +23,7 @@ sage library quickstart --name "My Library" --from-dir ./prompts/ --dry-run
 After quickstart:
 - Alias auto-saved (e.g., `my-library`)
 - Context auto-set to new DAO
-- Run `sage prompts publish --yes --library-id default` to publish updates (default stream)
+- Run `sage library promote <library> --dao <dao> --auto --yes` to publish updates (default stream)
 </quickstart>
 
 <install_sources>
@@ -29,10 +31,10 @@ After quickstart:
 
 ```bash
 # From DAO
-sage install 0xYourDaoAddress --library-id default
+sage library sync --dao 0xYourDaoAddress
 
 # V5 multi-library: install from a non-default stream
-sage install 0xYourDaoAddress --library-id writing
+sage library sync --dao 0xYourDaoAddress --library-id writing
 
 # Create a new stream (one-time)
 DATA=$(cast calldata "createLibrary(address,string)" 0xYourDaoAddress writing)
@@ -56,7 +58,7 @@ sage install build-web3
 
 Notes:
 - `/prompt/:cid` serves allowlisted on-chain prompts (DAO + on-chain personal/vault). 
-- SIWE vault prompts are private; use `sage library vault`.
+- SIWE vault prompts are private; use `sage library create --visibility private` / `sage library shared`.
 </install_sources>
 
 <agent_workflows>
@@ -91,14 +93,14 @@ sage project latest-prompts --subdao 0xDAO --download
 
 ```bash
 # One-shot publish (creates proposal for community DAOs)
-sage prompts publish --yes --library-id default
+sage library promote <library> --dao <dao> --auto --yes
 
 # Create proposal only (no submit)
 sage prompts propose --yes
 
 # Alternative: publish to a specific DAO (without setting context)
 sage prompts init --import-from ./prompts/
-sage prompts publish --yes --subdao 0xDAO --library-id default --pin
+sage library promote <library> --dao 0xDAO --auto --yes
 ```
 
 ---
@@ -149,7 +151,7 @@ sage prompts pull code-review
 sage prompts diff
 
 # 5. Publish back to DAO
-sage prompts publish --yes --library-id default
+sage library promote <library> --dao <dao> --auto --yes
 
 # 6. For community DAOs, vote on the proposal
 sage proposals inbox
@@ -163,7 +165,7 @@ sage governance vote-with-reason <id> 1 "Improved edge case handling"
 | Error | Cause | Fix Command |
 |-------|-------|-------------|
 | `NonceMismatch` | Concurrent update | `sage prompts sync --pull` then retry |
-| `No manifest registered` | DAO has no library | `sage prompts init && sage prompts publish --yes` |
+| `No manifest registered` | DAO has no library | `sage library create <library> && sage library push <library> --cloud` |
 | `insufficient proposer votes` | Not enough delegated voting power | See `sage governance preflight` for fix commands |
 | `Governor not resolved` | Missing DAO context | `sage dao use 0xDAO` first |
 </agent_workflows>
@@ -186,7 +188,7 @@ sage prompts import-skill <name>                      # Import skill template
 sage prompts variant <key> [suffix]                   # Clone as variant
 
 # Publishing
-sage prompts publish --yes --library-id default       # One-shot publish (default stream)
+sage library promote <library> --dao <dao> --auto --yes       # One-shot publish (default stream)
 sage prompts propose --yes                            # Create proposal only
 sage prompts sync                                     # Sync with on-chain
 
@@ -201,7 +203,7 @@ sage governance propose-library --manifest-cid <cid>  # Propose an already-uploa
 # Content detection & auto-publish
 sage project scan [dir]                               # Classify content (skills vs prompts)
 sage prompts init --import-from [dir]                 # Bring content into workspace
-sage prompts publish --dry-run                        # Preview the manifest built from workspace changes
+sage library push <library> --dry-run                        # Preview the manifest built from workspace changes
 
 # Utilities
 sage prompts search <query>                           # Search prompts
@@ -230,7 +232,7 @@ Creates:
 - `.sage/workspace.json` for state tracking (snapshot of all files)
 - Git-friendly structure for versioning
 
-**CRITICAL: How `sage prompts publish` works:**
+**CRITICAL: How `sage library push <library> --cloud` works:**
 
 The `publish` command does NOT use `manifest.json`. It works by:
 1. Reading the workspace snapshot (`.sage/workspace.json`)

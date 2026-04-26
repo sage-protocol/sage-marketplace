@@ -14,7 +14,7 @@ Install this skill directly in Claude Code:
 Or via Sage CLI:
 
 ```bash
-sage prompts publish-skill ./  # Get install URL
+sage library push <library> --cloud-skill ./  # Get install URL
 sage skill install-url <cid>   # Generate install command for any CID
 ```
 
@@ -337,8 +337,8 @@ Skill discovery: `sage suggest skill "<intent>"`
 Daemon Start: `sage daemon start`
 
 Publishing (personal DAOs use --exec for instant auto-vote/execute):
-- Personal DAO: `sage prompts publish --yes --exec`
-- Community DAO: `sage prompts publish --yes` (creates proposal)
+- Personal DAO: `sage library promote <library> --dao <dao> --auto --yes`
+- Community DAO: `sage library promote <library> --dao <dao> --auto --yes` (creates proposal)
 
 These commands are executed SILENTLY. User sees only visual results.
 </technical_reference>
