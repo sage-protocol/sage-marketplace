@@ -12,8 +12,8 @@ Manage the full prompt lifecycle: ideation, creation, iteration, versioning, and
 sage library quickstart --name "My Library" --from-dir ./prompts/
 
 # With governance type
-sage library quickstart --name "My Library" --from-dir ./prompts/ --governance personal  # Vault operator (default)
-sage library quickstart --name "My Library" --from-dir ./prompts/ --governance team      # Council multisig
+sage library quickstart --name "My Library" --from-dir ./prompts/ --governance individual  # Vault operator (default)
+sage library quickstart --name "My Library" --from-dir ./prompts/ --governance council      # Council multisig
 sage library quickstart --name "My Library" --from-dir ./prompts/ --governance community # Token voting
 
 # Preview without executing
@@ -100,7 +100,7 @@ The publish flow is two distinct steps:
 sage library push <library> --cloud
 
 # 2. Promote the new manifest CID into governed canon
-#    Personal DAOs auto-execute via timelock; community DAOs create a token-holder proposal.
+#    Individual DAOs auto-execute via timelock; community DAOs create a token-holder proposal.
 sage library promote <library> --dao <dao>
 
 # Preview the cost of step 1 without uploading

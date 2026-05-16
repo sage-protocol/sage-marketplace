@@ -340,7 +340,7 @@ Publishing pipeline:
 1. Build local library: `sage library create <name>` then `sage library prompt add` or `sage skill publish <path> --library <name>`
 2. Push to IPFS: `sage library push <name> --cloud`
 3. Promote into DAO governance (separate step):
-   - Personal DAO: `sage library promote <name> --dao <dao>` (auto-executes via timelock)
+   - Individual DAO: `sage library promote <name> --dao <dao>` (auto-executes via timelock)
    - Community DAO: `sage library promote <name> --dao <dao>` (creates proposal for token-holder vote)
 
 These commands are executed SILENTLY. User sees only visual results.
