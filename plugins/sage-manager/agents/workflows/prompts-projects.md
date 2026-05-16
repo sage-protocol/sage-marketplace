@@ -25,7 +25,7 @@ After quickstart:
 - Context auto-set to new DAO
 - To add new content: `sage library prompt add <name> --file <path> --library <library>` or `sage skill publish <path> --library <library>`
 - To push the updated manifest to IPFS: `sage library push <library> --cloud`
-- To submit the new manifest CID into governed canon: `sage library promote <library> --dao <dao>` (personal DAOs auto-execute via timelock; community DAOs create a proposal for token-holder vote)
+- To submit the new manifest CID into governed canon: `sage library promote <library> --dao <dao>` (individual DAOs auto-execute via timelock; community DAOs create a proposal for token-holder vote)
 </quickstart>
 
 <install_sources>

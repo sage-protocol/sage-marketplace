@@ -198,7 +198,7 @@ Only proceed to proposing once preflight is clean.
 <operator_mode_note>
 **OPERATOR Mode DAOs (No Voting Required)**
 
-For personal DAOs or council-closed DAOs with `governanceKind: OPERATOR`:
+For individual DAOs or council-closed DAOs with `governanceKind: OPERATOR`:
 - No token voting occurs (threshold=0, quorum=0)
 - The DAO owner/council executes changes directly via Timelock
 - Regular users cannot participate in governance - the owner controls everything
