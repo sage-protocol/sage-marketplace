@@ -251,7 +251,7 @@ Library (DAO) management.
 
 ```bash
 # Create library + DAO in one command
-sage library quickstart -n "My Library" --from-dir ./prompts --governance individual
+sage library quickstart -n "My Library" --from-dir ./prompts --governance personal
 
 # Fork existing library
 sage library fork 0xSourceDAO -n "My Fork"
@@ -335,7 +335,7 @@ DAO creation and management.
 
 ```bash
 # Create new DAO
-sage dao create -n "My DAO" --governance individual
+sage dao create -n "My DAO" --governance personal
 
 # List available DAOs
 sage dao list
@@ -497,7 +497,7 @@ sage doctor
 ```bash
 mkdir my-prompts && cd my-prompts
 echo "# My Prompt\n\nYou are a helpful assistant." > hello.md
-sage library quickstart -n "My DAO" --from-dir . --governance individual --yes
+sage library quickstart -n "My DAO" --from-dir . --governance personal --yes
 sage dao list
 ```
 

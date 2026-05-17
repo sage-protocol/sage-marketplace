@@ -12,7 +12,7 @@ Manage the full prompt lifecycle: ideation, creation, iteration, versioning, and
 sage library quickstart --name "My Library" --from-dir ./prompts/
 
 # With governance type
-sage library quickstart --name "My Library" --from-dir ./prompts/ --governance individual  # Vault operator (default)
+sage library quickstart --name "My Library" --from-dir ./prompts/ --governance personal  # Vault operator (default)
 sage library quickstart --name "My Library" --from-dir ./prompts/ --governance council      # Council multisig
 sage library quickstart --name "My Library" --from-dir ./prompts/ --governance community # Token voting
 
@@ -25,7 +25,7 @@ After quickstart:
 - Context auto-set to new DAO
 - To add new content: `sage library prompt add <name> --file <path> --library <library>` or `sage skill publish <path> --library <library>`
 - To push the updated manifest to IPFS: `sage library push <library> --cloud`
-- To submit the new manifest CID into governed canon: `sage library promote <library> --dao <dao>` (individual DAOs auto-execute via timelock; community DAOs create a proposal for token-holder vote)
+- To submit the new manifest CID into governed canon: `sage library promote <library> --dao <dao>` (personal DAOs auto-execute via timelock; community DAOs create a proposal for token-holder vote)
 </quickstart>
 
 <install_sources>
@@ -41,7 +41,7 @@ sage library sync --dao 0xYourDaoAddress --library-id writing
 # Create a new stream (one-time)
 DATA=$(cast calldata "createLibrary(address,string)" 0xYourDaoAddress writing)
 
-# Community/team: create a proposal (custom call)
+# Community/council: create a proposal (custom call)
 sage governance wizard --subdao 0xYourDaoAddress
 
 # Personal/operator: schedule via timelock
@@ -100,7 +100,7 @@ The publish flow is two distinct steps:
 sage library push <library> --cloud
 
 # 2. Promote the new manifest CID into governed canon
-#    Individual DAOs auto-execute via timelock; community DAOs create a token-holder proposal.
+#    Personal DAOs auto-execute via timelock; community DAOs create a token-holder proposal.
 sage library promote <library> --dao <dao>
 
 # Preview the cost of step 1 without uploading
@@ -167,7 +167,7 @@ sage governance vote-with-reason <id> 1 "Improved edge case handling"
 
 **Governance Types** (chosen via `sage library quickstart --governance <kind>`; affects how `sage library promote` behaves):
 - `personal`: pass `--auto` to `sage library promote` for auto-schedule + auto-execute via timelock (Council/Personal mode only — see `sage library promote --help`).
-- `team`: Council multisig approval required. Promote without `--auto` and have the council members vote/execute.
+- `council`: Council multisig approval required. Promote without `--auto` and have the council members vote/execute.
 - `community`: Token holder voting required. Promote without `--auto`; this creates a proposal that token holders vote on, then anyone can execute.
 
 ---
