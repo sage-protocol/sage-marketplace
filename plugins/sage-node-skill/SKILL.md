@@ -185,11 +185,11 @@ Configuration management.
 # Set RPC endpoint
 sage config set-rpc https://sepolia.base.org --chain-id 84532
 
-# Import contract addresses
-sage config addresses import --file addresses.json
+# Override a contract address for an unreleased deployment
+sage config set contracts.subdao_factory 0x...
 
-# Show current config
-sage config addresses show
+# Show current config and embedded deployment defaults
+sage config show
 
 # IPFS setup
 sage config ipfs onboard
