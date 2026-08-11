@@ -1,0 +1,54 @@
+{
+  "$comment": "Field checklist only. Configure these values through existing Buzz relay and managed-agent surfaces. Do not add credentials, paths, or live identifiers here.",
+  "channel": {
+    "name": "Sage Vision",
+    "type": "stream",
+    "visibility": "private",
+    "validation_access": "owner-or-allowlist"
+  },
+  "team": {
+    "order": ["vision-scout", "repo-grounder", "vision-steward"]
+  },
+  "agents": {
+    "vision-scout": {
+      "runtime": "buzz-agent",
+      "skill": "sage-vision-signal-capture",
+      "triggers": "mentions-only",
+      "handoff": "mention-repo-grounder-once",
+      "heartbeat_seconds": 3600,
+      "empty_heartbeat": "silence"
+    },
+    "repo-grounder": {
+      "runtime": "buzz-agent",
+      "skill": "sage-vision-claim-grounding",
+      "triggers": "mentions-only",
+      "handoff": "mention-vision-steward-once",
+      "heartbeat_seconds": null,
+      "without_evidence_capability": "unknown"
+    },
+    "vision-steward": {
+      "runtime": "buzz-agent",
+      "skill": "sage-vision-proposal-drafting",
+      "triggers": "mentions-only",
+      "handoff": "none-terminate-cycle",
+      "heartbeat_seconds": null,
+      "output": "proposal-draft-only"
+    }
+  },
+  "tool_policy": {
+    "allow": {
+      "vision-scout": ["relay-conversation", "role-skill", "explicit-read-only-evidence"],
+      "repo-grounder": ["relay-conversation", "role-skill", "explicit-read-only-evidence"],
+      "vision-steward": ["relay-conversation", "role-skill"]
+    },
+    "deny": [
+      "buzz-dev-mcp",
+      "shell",
+      "arbitrary-file-read",
+      "arbitrary-file-write",
+      "publish",
+      "wallet-mutation",
+      "governance-mutation"
+    ]
+  }
+}
