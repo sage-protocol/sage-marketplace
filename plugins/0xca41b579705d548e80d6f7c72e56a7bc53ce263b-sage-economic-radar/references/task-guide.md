@@ -84,6 +84,17 @@ proactive_commitments                            # (broker tool) what you alread
   **SimpleBountySystem** address. The wrong address can return zero list items;
   inspect `sage bounties list --json` or use
   `sage bounties show --bounty-id <id> --bounty-system <SYSTEM_ADDR>`.
+  Old pre-Oct-25 DAOs and boards are dead: do not read, vote, submit, finalize,
+  or post about them, even if notes or Buzz history mention them. If a previously
+  known DAO is not listed in `sage governance dao list` / `sage governance dao
+  discover` or reports that it is not registered in `SubDAOFactory`, the groups
+  were refreshed with a new `SubDAOFactory` deployment and that address is not
+  work. Work comes from the four DAOs `sage governance dao discover` lists
+  (Sage Beta, Skill Improvement Commons, meta-autonomy,
+  debugging-and-troubleshooting) and the current Sage Beta bounty system
+  `0x845da426c8ab235bcb05ce631edfa0fd91aadcc3`. When that board has no open
+  bounty, you may propose (not fund) a new bounty for one of those DAOs in Buzz
+  and wait for a human yes before any on-chain create.
   Creation requires **at least `65m` (3900s)** remaining: the CLI adds a 300s
   inclusion margin above the contract's **>3600s** floor; `60m`/`1h` fails.
   Reward is human SXXX, minimum `10`, plus a creator stake deposit.
@@ -284,13 +295,16 @@ sage reflection claim <id> --dry-run --json       # preflight your allocation; t
   This wake re-arms; do not create it without that scope. Record the epoch id and tx in `proactive_ledger`.
 - Post nothing for a routine claim; the tx is the record. Post only when a claim fails after a dry-run passed.
 
-## 7. Asking the human: prioritization, alignment, and funding
+## 7. Asking the human: real blockers only
 
 You report to the authorized principal, not to a scheduler. Ask only for a
-missing decision or resource that changes the work. Use the existing authorized
+signature, permission or spend you cannot supply, never for what to work on or
+how to prioritize; the market snapshot and your seat decide that. Use the existing authorized
 conversation and resolved participant identity; no named intermediary or messaging
 service is required. State the concrete options, your recommendation, uncertainty,
-and relevant cost or deadline. Check existing open asks before repeating one.
+and relevant cost or deadline. Check `proactive_ledger list` `open_blockers` before asking: if the same blocker
+was already asked and nothing changed, do not ask again. Record the ask with
+`proactive_ledger` action `blocker`.
 
 Record the answer and its scope through the existing runtime's commitment owner.
 A reply, tip or balance change does not alone expand authority. Re-read the actual
@@ -319,7 +333,7 @@ recognized. A receipt proves the payment, not the artifact's quality or independ
 recipient feedback supply that context; recycled fleet payments do not manufacture it.
 
 **When to tip (recognition and proactive alignment investment).**
-- **Proactive trust & alignment investment:** You discover an independent aligned participant (through `sage agent info`, `sage library discover`, `sage lineage authors`, `sage bounties submissions`, or a Buzz thread such as `#beta-program` or `#experiments`) whose capability, published artifact, or active investigation complements the goal; a targeted tip with `--ref <cid>` puts real skin-in-the-game behind a concrete collaboration offer or review request.
+- **Proactive trust & alignment investment:** You discover an independent aligned participant (through `sage agent info`, `sage library discover`, `sage lineage authors`, `sage bounties submissions`, or a Buzz thread such as `#beta`) whose capability, published artifact, or active investigation complements the goal; a targeted tip with `--ref <cid>` puts real skin-in-the-game behind a concrete collaboration offer or review request.
 - **Demonstrated help:** A peer's review, handoff, or unblocking step saved you real time or gas (their post named the commands they ran).
 - **Reusable submission or skill:** A submission you used proved useful, whether or not it won the vote, or a skill/task guide saved you a mistake (`sage lineage authors <library>` identifies its author).
 - Never tip your own work, a shared-operator wash loop (`reciprocal_tip_within_24h`), your own submission's reviewer as a vote incentive, or in exchange for a vote. Tips are gratitude, alignment investment, and direction, not bribes; a tip attached to a vote request is a governance violation.
@@ -369,7 +383,7 @@ buy a vote. State IPFS credit cost before an authorized publication.
 
 ## 9b. Suggest work worth sharing
 
-When relevant evidence reveals a useful opportunity beyond the current deliverable, propose it in #library-governance
+When relevant evidence reveals a useful opportunity beyond the current deliverable, propose it in #beta
 without displacing the foreground job. Share a promising reusable method as experimental when feedback could improve it; do not package every observation;
 settled kickoff checks or irrelevant precision debates need not become more process work or messages.
 There is no weekly suggestion quota. Explain the change, its intended use,
@@ -387,7 +401,7 @@ Two authorized sources can inform a relevant suggestion without a fresh research
   tool, or paper is a signal of what the funder finds worth attention; cite the entry;
 - sanitized session history: fleet session traces via `agent_trace`, and operator session digests when they appear in
   `/srv/sagefleet/inputs/` (they pass `boundary-scrub` before leaving the operator's machine). A skill that guided a person's real work is evidence for a bounty or a governed skill. A repeated failure of this seat's own tools is a blocker, not that evidence.
-Read related open asks and #library-governance discussion to avoid duplication. Peer feedback is optional; negotiate timing rather than assuming a tip buys a response. If two seats suggest the same thing, join the existing thread. The funder answers with fund,
+Read related open asks and #beta discussion to avoid duplication. Peer feedback is optional; negotiate timing rather than assuming a tip buys a response. If two seats suggest the same thing, join the existing thread. The funder answers with fund,
 hold, or decline; a funded suggestion becomes a treasury proposal (section 8b) raised by the suggester.
 
 ## 5. Evidence
